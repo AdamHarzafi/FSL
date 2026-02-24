@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Formazione PCTO - Harzafi Adam</title>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Tema Scuro di default */
+            --bg-deep: #020617;
+            --bg-surface: rgba(15, 23, 42, 0.45); /* Glass transparente */
+            --bg-surface-hover: rgba(15, 23, 42, 0.65);
+            
+            --primary-blue: #3b82f6;
+            --primary-blue-glow: rgba(59, 130, 246, 0.6);
+            --mim-blue: #60a5fa;
+            
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.12);
+            --glass-shine: rgba(255, 255, 255, 0.05);
+            
+            --blob-1: rgba(59, 130, 246, 0.25);
+            --blob-2: rgba(96, 165, 250, 0.15);
+            --blob-3: rgba(139, 92, 246, 0.20);
+            --success-color: #10b981;
+        }
+
+        /* Tema Chiaro applicato al body */
+        body.light-mode {
+            --bg-deep: #f1f5f9;
+            --bg-surface: rgba(255, 255, 255, 0.65);
+            --bg-surface-hover: rgba(255, 255, 255, 0.85);
+            
+            --primary-blue: #2563eb;
+            --primary-blue-glow: rgba(37, 99, 235, 0.4);
+            --mim-blue: #0369a1;
+            
+            --text-main: #0f172a; /* Testo NERO per il tema chiaro */
+            --text-muted: #475569;
+            --border: rgba(0, 0, 0, 0.1);
+            --glass-shine: rgba(255, 255, 255, 0.5);
+            
+            --blob-1: rgba(37, 99, 235, 0.2);
+            --blob-2: rgba(14, 165, 233, 0.15);
+            --blob-3: rgba(124, 58, 237, 0.15);
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            overflow-x: hidden;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        button {
+            color: var(--text-main);
+            transition: color 0.4s ease;
+        }
+
+        /* --- VETRO LIQUIDO (SFONDO BLOB ANIMATI) --- */
+        #liquid-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            will-change: transform;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.8;
+            will-change: transform, left, top;
+            animation: moveBlobs 25s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .blob-1 { background: var(--blob-1); width: 600px; height: 600px; top: -10%; left: -10%; }
+        .blob-2 { background: var(--blob-2); width: 700px; height: 700px; bottom: -20%; right: -10%; animation-duration: 35s; animation-direction: alternate-reverse; }
+        .blob-3 { background: var(--blob-3); width: 500px; height: 500px; top: 30%; left: 60%; animation-duration: 20s; }
+
+        @keyframes moveBlobs {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(20vw, 15vh) scale(1.1); }
+            66% { transform: translate(-10vw, 30vh) scale(0.9); }
+            100% { transform: translate(-20vw, -10vh) scale(1.2); }
+        }
+
+        .glass-panel {
+            background: var(--bg-surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            box-shadow: inset 0 1px 0 0 var(--glass-shine), 0 8px 32px 0 rgba(0,0,0,0.1);
+        }
+
+        /* --- LOADER E SPLASH SCREEN --- */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease;
+        }
+        body.light-mode #splash-screen { background: rgba(241, 245, 249, 0.8); }
+
+        .splash-logos { display: flex; align-items: center; gap: 40px; margin-bottom: 50px; }
+        .splash-logos img { height: 85px; object-fit: contain; }
+
+        .loader-container { width: 240px; height: 3px; background: var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 25px; }
+        .loader-progress { width: 0%; height: 100%; background: var(--primary-blue); box-shadow: 0 0 10px var(--primary-blue); animation: loadProgress 2.8s cubic-bezier(0.1, 0, 0.2, 1) forwards; }
+        .welcome-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 5px; color: var(--text-muted); font-weight: 600; }
+        
+        .eu-logo-splash { position: absolute; bottom: 40px; max-width: 320px; height: auto; }
+        @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
+
+        /* --- CONTENT MAIN E HEADER --- */
+        #main-content { opacity: 0; transition: opacity 1s ease; position: relative; }
+
+        .main-header {
+            padding: 35px 20px 35px;
+            display: flex; flex-direction: column; align-items: center;
+            position: relative;
+            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
+            margin-bottom: 30px;
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        .mim-container { width: 100%; display: flex; justify-content: center; }
+        
+        /* LOGO DEL MINISTERO: (SOLO QUELLO ALTO IN CIMA) Diventerà completamente nero nel tema chiaro! */
+        .nav-mim-logo { height: 55px; max-width: 90%; object-fit: contain; transition: filter 0.4s ease; }
+        body.light-mode .nav-mim-logo { filter: brightness(0); }
+        
+        .header-divider { width: 100%; max-width: 600px; height: 1px; background-color: var(--border); margin: 30px 0; }
+        
+        .school-container { display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .nav-school-logo { height: 110px; object-fit: contain; margin-bottom: 18px; filter: drop-shadow(0px 10px 15px rgba(0,0,0,0.1));}
+        
+        .school-title { font-size: 1.25rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; color: var(--text-main); transition: color 0.4s ease;}
+        .school-subtitle { font-size: 0.95rem; font-weight: 700; color: var(--primary-blue); text-transform: uppercase; letter-spacing: 1.5px; transition: color 0.4s ease;}
+        
+        .year-badge { position: absolute; top: 25px; right: 40px; font-size: 0.8rem; font-weight: 700; color: var(--text-main); padding: 8px 16px; border-radius: 30px; border: 1px solid var(--primary-blue); background: var(--bg-surface); backdrop-filter: blur(10px); transition: color 0.4s ease, background 0.4s ease; }
+
+        .hero { padding: 40px 20px 80px; text-align: center; }
+        .hero h1 { font-size: 2.7rem; font-weight: 900; letter-spacing: -1px; margin-bottom: 15px; color: var(--text-main); text-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: color 0.4s ease; }
+        .hero p { font-size: 1.15rem; color: var(--text-muted); max-width: 650px; margin: 0 auto; line-height: 1.6; font-weight: 500; transition: color 0.4s ease;}
+
+        /* --- DASHBOARD E GRAFICO --- */
+        .dashboard { max-width: 900px; margin: -50px auto 70px; border-radius: 24px; padding: 50px 40px; text-align: center; position: relative; z-index: 5; transition: background-color 0.4s ease, border-color 0.4s ease; }
+
+        .dashboard-header-flex { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .hours-title { font-size: 0.95rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2.5px; transition: color 0.4s ease;}
+        
+        .cert-badge { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--success-color); background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.4); padding: 5px 12px; border-radius: 20px; box-shadow: 0 0 10px rgba(16,185,129,0.1); }
+        .cert-badge svg { width: 14px; height: 14px; fill: currentColor; }
+
+        .hours-value { font-size: 5.5rem; font-weight: 900; color: var(--primary-blue); display: flex; justify-content: center; align-items: baseline; gap: 12px; position: relative; transition: color 0.4s ease, text-shadow 0.4s ease;}
+        body:not(.light-mode) .hours-value { text-shadow: 0 0 20px var(--primary-blue-glow); }
+        .hours-value span { font-size: 1.5rem; font-weight: 700; color: var(--text-muted); text-shadow: none; transition: color 0.4s ease;}
+
+        .stat-bar-container { width: 100%; max-width: 600px; height: 8px; border-radius: 10px; display: flex; margin: 35px auto 10px auto; overflow: hidden; background: rgba(0,0,0,0.1); border: 1px solid var(--border); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.4s ease; }
+        body.light-mode .stat-bar-container { background: rgba(0,0,0,0.08); box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .stat-segment { height: 100%; transform-origin: left; transform: scaleX(0); transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .stat-legend { max-width: 600px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); transition: color 0.4s ease;}
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+        /* --- TIMELINE E CARD --- */
+        .timeline { max-width: 800px; margin: 0 auto 100px; padding: 0 20px; position: relative; z-index: 5;}
+        
+        .section-tag { font-size: 1.15rem; font-weight: 800; margin-bottom: 30px; padding-bottom: 12px; display: inline-block; position: relative; color: var(--text-main); transition: color 0.4s ease;}
+        .section-tag::after { content:''; position: absolute; bottom: 0; left: 0; width: 60%; height: 3px; border-radius: 3px; background: linear-gradient(90deg, var(--primary-blue), transparent); }
+
+        .activity-card {
+            background: var(--bg-surface); 
+            border: 1px solid var(--border);
+            border-radius: 16px; padding: 25px; margin-bottom: 25px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative; overflow: hidden;
+            color: var(--text-main);
+            text-align: left;
+            width: 100%;
+            --mouse-x: 50%; --mouse-y: 50%;
+        }
+        
+        .activity-card::before {
+            content: ''; position: absolute; inset: 0; z-index: 0;
+            background: radial-gradient(circle 200px at var(--mouse-x) var(--mouse-y), var(--glass-shine), transparent 60%);
+            opacity: 0; transition: opacity 0.5s ease; pointer-events: none;
+        }
+
+        .activity-card:hover, .activity-card:focus-visible { border-color: var(--primary-blue); transform: translateY(-3px) scale(1.01); box-shadow: 0 15px 35px rgba(0,0,0,0.15); background: var(--bg-surface-hover); }
+        .activity-card:hover::before { opacity: 1; }
+
+        .ac-hackersgen { border-left: 5px solid var(--primary-blue); }
+        .ac-cert { background: rgba(59, 130, 246, 0.05); border-left: 5px solid var(--mim-blue); border-color: var(--primary-blue); }
+        
+        .act-grid { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 1; }
+
+        .act-content h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; color: var(--text-main); transition: color 0.4s ease;}
+        .ac-cert h3 { color: var(--primary-blue) !important; text-shadow: 0 0 15px rgba(59, 130, 246, 0.2);}
+        
+        .act-meta { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; transition: color 0.4s ease;}
+        .act-meta b { color: var(--text-main); font-weight: 700; transition: color 0.4s ease;}
+        
+        .act-date { color: var(--mim-blue); font-weight: 800; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 6px; display: inline-block; background: rgba(59, 130, 246, 0.1); padding: 4px 10px; border-radius: 6px; letter-spacing: 0.5px;}
+
+        .special-badge-date { background: var(--text-main); color: var(--bg-deep); transition: background 0.4s ease, color 0.4s ease;}
+
+        .act-hours {
+            background: var(--bg-deep); padding: 10px 18px; border-radius: 12px; font-weight: 900; font-size: 1.1rem; border: 1px solid var(--border); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); position: relative; z-index: 2; color: var(--text-main); transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+        }
+        .ac-cert .act-hours { background: var(--primary-blue); color: #fff; border: none; box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3); text-shadow: none; }
+
+        .card-dropdown { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding-top: 0; opacity: 0; z-index: 1; position: relative;}
+        .card-dropdown-inner { overflow: hidden; }
+        .activity-card[aria-expanded="true"] { padding-bottom: 25px; border-color: var(--primary-blue); background: var(--bg-surface-hover); }
+        .activity-card[aria-expanded="true"] .card-dropdown { grid-template-rows: 1fr; margin-top: 15px; border-top: 1px dashed var(--border); padding-top: 15px; opacity: 1; }
+        
+        .ext-info-box { font-size: 0.85rem; color: var(--text-main); opacity: 0.95; line-height: 1.5; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--glass-shine); transition: background 0.4s ease, color 0.4s ease; }
+        body.light-mode .ext-info-box { background: rgba(0,0,0,0.05); }
+
+        /* FOOTER: Rimosso filter brightness(0) richiesto - Rimanerà in tonalità normale intoccato sia tema Chiaro sia Tema Scuro */
+        footer { border-top: 1px solid var(--border); padding: 50px 20px; text-align: center; border-radius: 40px 40px 0 0; transition: border-color 0.4s ease;}
+        
+        .footer-logo-mim { height: 50px; margin-bottom: 20px; filter: grayscale(20%); opacity: 0.8; transition: all 0.4s ease; }
+        .footer-logo-mim:hover { filter: grayscale(0%); opacity: 1; }
+        
+        body.light-mode .footer-logo-mim { opacity: 0.95; } 
+
+        .copyright-text { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; letter-spacing: 1px; transition: color 0.4s ease; }
+
+        #theme-toggle { position: fixed; bottom: 30px; left: 30px; width: 50px; height: 50px; border-radius: 25px; border: 1px solid var(--border); background: var(--bg-surface); backdrop-filter: blur(10px); color: var(--text-main); cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 100; transition: transform 0.2s, box-shadow 0.2s, background 0.4s ease, border-color 0.4s ease; outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        #theme-toggle:hover, #theme-toggle:focus-visible { transform: scale(1.1); border-color: var(--primary-blue); box-shadow: 0 0 20px var(--primary-blue-glow); }
+        #theme-toggle svg { width: 22px; height: 22px; fill: currentColor; }
+        
+        .icon-light { display: block; } .icon-dark { display: none; }
+        body.light-mode .icon-light { display: none; } body.light-mode .icon-dark { display: block; }
+
+        @media (max-width: 768px) {
+            .blob { opacity: 0.5; filter: blur(90px); } 
+            .main-header { padding: 30px 15px 30px; border-radius: 0 0 30px 30px; }
+            .year-badge { position: relative; top: 0; right: 0; margin-top: 25px; width: auto;}
+            .nav-mim-logo { height: 45px; } .nav-school-logo { height: 80px; }
+            .hero h1 { font-size: 2rem; }
+            .hours-value { font-size: 3.8rem; flex-direction: column; align-items: center; gap:0;}
+            .hours-value span { font-size: 1.2rem; margin-top: -10px;}
+            
+            .act-grid { flex-direction: column; gap: 18px; }
+            .act-hours { align-self: flex-start; padding: 8px 14px; font-size: 1rem; }
+            .card-dropdown { position: relative; padding-bottom:0;}
+            #theme-toggle { bottom: 20px; left: 20px; width: 45px; height: 45px;}
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            .blob { animation: none !important; }
+            #liquid-bg { display: none; }
+            * { transition: none !important; animation-duration: 0.01ms !important; scroll-behavior: auto !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="liquid-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <button id="theme-toggle" aria-label="Cambia Tema visivo">
+        <svg class="icon-light" viewBox="0 0 24 24"><path d="M12,21A9,9 0 0,1 3,12A9,9 0 0,1 12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A1,1 0 0,1 20,11A1,1 0 0,1 21,12A9,9 0 0,1 12,21Z"/></svg>
+        <svg class="icon-dark" viewBox="0 0 24 24"><path d="M12,18C15.31,18 18,15.31 18,12C18,8.69 15.31,6 12,6C8.69,6 6,8.69 6,12C6,15.31 8.69,18 12,18M12,20A8,8 0 1,1 20,12A8,8 0 0,1 12,20M11,1H13V4H11V1M11,20H13V23H11V20M4.14,4.86L6.26,2.74L8.38,4.86L6.26,6.98L4.14,4.86M17.74,19.14L19.86,17.02L21.98,19.14L19.86,21.26L17.74,19.14M1,11H4V13H1V11M20,11H23V13H20V11M5.56,17.02L3.44,19.14L5.56,21.26L7.68,19.14L5.56,17.02M19.14,4.86L17.02,6.98L19.14,9.1L21.26,6.98L19.14,4.86Z"/></svg>
+    </button>
+
+    <div id="splash-screen">
+        <div class="splash-logos">
+            <img src="https://i.ibb.co/mVN9xcHB/LOGO-HARZAFI.png" alt="Harzafi Logo">
+            <img src="Emblem_of_Italy.svg" alt="Emblema Repubblica" style="max-height:85px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2));">
+        </div>
+        <div class="loader-container"><div class="loader-progress"></div></div>
+        <div class="welcome-label" aria-live="polite">Decriptazione Dossier in corso...</div>
+        <img src="pnrr-logo-removebg-preview.png" class="eu-logo-splash" alt="Logo PNRR">
+    </div>
+
+    <div id="main-content">
+        <header class="main-header glass-panel">
+            <div class="mim-container">
+                <!-- IMMAGINE AGGIORNATA COME RICHIESTO! -->
+                <img src="Logomim-removebg-preview.png" class="nav-mim-logo" alt="Ministero dell'Istruzione e del Merito">
+            </div>
+            <div class="header-divider"></div>
+            <div class="school-container">
+                <img src="https://i.ibb.co/Q3fhCWBy/avologo.png" class="nav-school-logo" alt="Logo Avogadro">
+                <div class="school-title">ITIS Amedeo Avogadro Torino</div>
+                <div class="school-subtitle">Informatica e Telecomunicazioni</div>
+            </div>
+            <div class="year-badge">A.S. 2025 / 2026</div>
+        </header>
+
+        <section class="hero">
+            <h1>Registro Digitale Ore PCTO</h1>
+            <p>Attestato telematico immodificabile per l'accertamento dell'Alternanza Scuola Lavoro. <br>Documento generato a norma, emesso in nome di <b>Harzafi Adam</b>.</p>
+        </section>
+
+        <section class="dashboard glass-panel">
+            <div class="dashboard-header-flex">
+                <p class="hours-title">Montante Ore Accumulato</p>
+                <div class="cert-badge">
+                    <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z"/></svg>
+                    Certificato
+                </div>
+            </div>
+            
+            <div class="hours-value">
+                <div id="hour-counter">000.00</div>
+                <span>ORE</span>
+            </div>
+
+            <div class="stat-bar-container" id="stat-bars">
+                <div class="stat-segment" style="width: 26.5%; background: var(--primary-blue);" title="Soft Skills & Security"></div>
+                <div class="stat-segment" style="width: 15%; background: var(--mim-blue);" title="Programmazione Sviluppo AI"></div>
+                <div class="stat-segment" style="width: 11%; background: #8b5cf6;" title="Orientamento Visite Studio"></div>
+                <div class="stat-segment" style="width: 47.5%; background: var(--success-color);" title="Corsi Ufficiali e Macro IoT"></div>
+            </div>
+            <div class="stat-legend mt-2" style="margin-top: 15px;">
+                <div class="legend-item"><div class="legend-dot" style="background:var(--success-color)"></div>Macro IoT (50h)</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--primary-blue)"></div>Sicurezza / Trasversale (28h)</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--mim-blue)"></div>Development & AI (16h)</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div>Formazione Open (11.5h)</div>
+            </div>
+        </section>
+
+        <div class="timeline">
+            <h2 class="section-tag">Inventario Esperienziale</h2>
+
+            <button class="activity-card" aria-expanded="false" type="button">
+                <div class="act-grid">
+                    <div class="act-content">
+                        <span class="act-date">Gio 16 Ottobre 2025</span>
+                        <h3>Roll Cloud & Artificial Intelligence</h3>
+                        <p class="act-meta">Luogo: <b>Campus Einaudi (UniTo)</b> • Tutor: Elena Genetti</p>
+                    </div>
+                    <div class="act-hours">4.00</div>
+                </div>
+                <div class="card-dropdown">
+                    <div class="card-dropdown-inner">
+                        <div class="ext-info-box">Lezione seminariale ospitata nell'infrastruttura d'Ateneo Università degli Studi Torino con Focus infrastrutture cloud aziendali collegate ai dataset delle reti LLM di Nuova Generazione.</div>
+                    </div>
+                </div>
+            </button>
+
+            <button class="activity-card" aria-expanded="false" type="button">
+                <div class="act-grid">
+                    <div class="act-content">
+                        <span class="act-date">Sab 25 Ottobre 2025</span>
+                        <h3>MUPIN: L'Alba dei Bit</h3>
+                        <p class="act-meta">Luogo: <b>Aula Magna (ITIS Avogadro)</b> • Storia Elettronica</p>
+                    </div>
+                    <div class="act-hours">1.30</div>
+                </div>
+                <div class="card-dropdown">
+                    <div class="card-dropdown-inner"><div class="ext-info-box">Presenza evento speciale Museo Piemontese Dell'Informatica focalizzata all'orientamento ed inquadramento storico sui dispositivi logici mainframe.</div></div>
+                </div>
+            </button>
+
+            <button class="activity-card ac-hackersgen" aria-expanded="false" type="button">
+                <div class="act-grid">
+                    <div class="act-content">
+                        <span class="act-date">24 Nov — 03 Dic 2025</span>
+                        <h3>Hackersgen: AI for Developers</h3>
+                        <p class="act-meta">Strumenti per Sviluppatori Live Web (5 Moduli)</p>
+                    </div>
+                    <div class="act-hours">10.00</div>
+                </div>
+                <div class="card-dropdown">
+                    <div class="card-dropdown-inner"><div class="ext-info-box">Studio integrativo piattaforme Hackersgen sulle AI implementate via code snippet dirette con API REST ad utilizzo backend software architecture. Attività online completata in 5 Episodi formali.</div></div>
+                </div>
+            </button>
+
+            <button class="activity-card ac-hackersgen" aria-expanded="false" type="button">
+                <div class="act-grid">
+                    <div class="act-content">
+                        <span class="act-date">06 Dic 2025 — 17 Gen 2026</span>
+                        <h3>Hackersgen: HTML5 & CSS3</h3>
+                        <p class="act-meta">Tecnica Front-end Application Structure</p>
+                    </div>
+                    <div class="act-hours">6.00</div>
+                </div>
+                <div class="card-dropdown">
+                    <div class="card-dropdown-inner"><div class="ext-info-box">Approccio accademico ed ecosistema per il Design di Siti Web performanti lato Front-end utilizzando l'ottimizzazione degli assi, pseudo-elementi css dinamici e media queries grid logic system.</div></div>
+                </div>
+            </button>
+
+            <button class="activity-card" aria-expanded="false" type="button">
+                <div class="act-grid">
+                    <div class="act-content">
+                        <span class="act-date">Gennaio 2026</span>
+                        <h3>Legge Obbligo Sicurezza d.lgs. 81</h3>
+                        <p class="act-meta">Formazione Accordo CSR <b>(Rischio Medio)</b></p>
+                    </div>
+                    <div class="act-hours">8.00</div>
+                </div>
+                <div class="card-dropdown">
+                    <div class="card-dropdown-inner"><div class="ext-info-box">Laboratorio di qualificazione prevenzionale base & specifica svolta su Laboratori istituto ai sensi delle Leggi attive PCTO Nazionali vigenti (Sicurezza Aule Magna SIST 1/ELE1).</div></div>
+                </div>
+            </button>
+
+            <button class="activity-card" aria-expanded="false" type="button">
+                <div class="act-grid">
+                    <div class="act-content">
+                        <span class="act-date">20 Gen — 18 Feb 2026</span>
+                        <h3>ITS Academy: Power Up SoftSkillz</h3>
+                        <p class="act-meta">C/O Eroga in <b>Via Durandi 10 (Sede ICT)</b></p>
+                    </div>
+                    <div class="act-hours">20.00</div>
+                </div>
+                <div class="card-dropdown">
+                    <div class="card-dropdown-inner"><div class="ext-info-box">Workshop immersivo intensivo sull'empatia del dialogo tecnologico, sviluppo della resocontazione ed in particolare sul Public Speaking per startups.</div></div>
+                </div>
+            </button>
+            
+            <button class="activity-card ac-cert glass-panel" aria-expanded="false" type="button">
+                <div class="act-grid">
+                    <div class="act-content">
+                        <span class="act-date special-badge-date">⭐ QUALIFICA UFFICIALE</span>
+                        <h3>Mastery Cybersecurity & IoT System</h3>
+                        <p class="act-meta"><b style="color:var(--mim-blue);">Corso Avanzato</b> protocolli web e reti hardware</p>
+                    </div>
+                    <div class="act-hours">50.00</div>
+                </div>
+                <div class="card-dropdown">
+                    <div class="card-dropdown-inner"><div class="ext-info-box" style="border:1px solid var(--primary-blue);">
+                        Programmazione certificativa finale PCTO 150h. Trattata la messa in bolla reti router a protezione Layer 3 Osi (Internet Protocol) unita alla gestione sensoristica di dispositivi Edge. Esami superati e validati ai fini dell'Esame di Stato.
+                    </div></div>
+                </div>
+            </button>
+
+            <button class="activity-card" aria-expanded="false" type="button">
+                <div class="act-grid">
+                    <div class="act-content">
+                        <span class="act-date">17 Gennaio 2026</span>
+                        <h3>Orientamento Open Day</h3>
+                        <p class="act-meta">Peer-Tutoring e supporto allo Staff d'Istituto</p>
+                    </div>
+                    <div class="act-hours">4.00</div>
+                </div>
+                <div class="card-dropdown">
+                    <div class="card-dropdown-inner"><div class="ext-info-box">Progetto Staff IT Interno alle aree pubbliche mostrate durante giornata Porte Aperte. Spiegato ed insegnato a potenziali neo studenti i laboratori networking.</div></div>
+                </div>
+            </button>
+
+            <button class="activity-card" aria-expanded="false" type="button">
+                <div class="act-grid">
+                    <div class="act-content">
+                        <span class="act-date">21 Febbraio 2026</span>
+                        <h3>Retro-Computing MUPIN (Fase 2)</h3>
+                        <p class="act-meta">Seminario: Analisi storica reti logiche binare.</p>
+                    </div>
+                    <div class="act-hours">2.00</div>
+                </div>
+                <div class="card-dropdown">
+                    <div class="card-dropdown-inner"><div class="ext-info-box">Lavoro di completamento seminario pre-festivi con ri-visita MUPIN e Focus architetture logico standard CPU pre-2000.</div></div>
+                </div>
+            </button>
+            
+        </div>
+
+        <footer class="glass-panel" style="margin: 0;">
+            <div class="container">
+                <img src="https://i.ibb.co/39k5Wq52/Logo-MIM.png" class="footer-logo-mim" alt="Logo Ministero">
+                <p class="copyright-text">DOSSIER REGISTRATO 🔒 HARZAFI ADAM ©</p>
+                <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 10px;">PROTOCOLLO PNRR // ITIS AVOGADRO</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- MAIN CORE SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const finalValue = 105.30;
+            const splashDuration = 2800;
+            
+            const bodyObj = document.body;
+            const splashObj = document.getElementById('splash-screen');
+            const mainObj = document.getElementById('main-content');
+            const toggleBtn = document.getElementById('theme-toggle');
+            
+            const saveDarkPref = localStorage.getItem('isFslDark');
+            if (saveDarkPref === 'false') { bodyObj.classList.add('light-mode'); }
+
+            toggleBtn.addEventListener('click', () => {
+                bodyObj.classList.toggle('light-mode');
+                localStorage.setItem('isFslDark', !bodyObj.classList.contains('light-mode'));
+            });
+
+            setTimeout(() => {
+                splashObj.style.opacity = '0';
+                
+                setTimeout(() => {
+                    splashObj.style.display = 'none';
+                    mainObj.style.display = 'block';
+                    setTimeout(() => { 
+                        mainObj.style.opacity = '1'; 
+                        setTimeout(() => {
+                             document.querySelectorAll('.stat-segment').forEach(el=> el.style.transform='scaleX(1)');
+                        }, 400);
+                    }, 50);
+
+                    let counterObj = document.getElementById('hour-counter');
+                    let cvValue = 0;
+                    const cDuration = 1800; 
+                    const speedInc = finalValue / (cDuration / 16.666); 
+
+                    function cycleFrames() {
+                        cvValue += speedInc;
+                        if (cvValue >= finalValue) {
+                            counterObj.innerText = finalValue.toFixed(2);
+                        } else {
+                            counterObj.innerText = cvValue.toFixed(2);
+                            window.requestAnimationFrame(cycleFrames);
+                        }
+                    };
+                    window.requestAnimationFrame(cycleFrames);
+                }, 800);
+            }, splashDuration);
+
+            const activityCardsNodeL = document.querySelectorAll('.activity-card');
+            activityCardsNodeL.forEach(currElMap => {
+                currElMap.addEventListener('mousemove', e => {
+                    const bXBoxObjLimit = currElMap.getBoundingClientRect(); 
+                    const axisPxSetLeft = e.clientX - bXBoxObjLimit.left; 
+                    const axisPxSetTop = e.clientY - bXBoxObjLimit.top;   
+                    currElMap.style.setProperty('--mouse-x', `${axisPxSetLeft}px`);
+                    currElMap.style.setProperty('--mouse-y', `${axisPxSetTop}px`);
+                });
+
+                currElMap.addEventListener('click', () => {
+                    const isOpen = currElMap.getAttribute('aria-expanded') === 'true';
+                    currElMap.setAttribute('aria-expanded', !isOpen);
+                });
+            });
+
+            const blobObjHolderPArxBackEffect = document.getElementById('liquid-bg');
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+                blobObjHolderPArxBackEffect.style.transform = `translateY(${scrollY * -0.2}px)`; 
+            });
+        });
+    </script>
+</body>
+</html>
