@@ -240,7 +240,28 @@
             footer.super-footer { border-radius: 30px 30px 0 0; }
             #theme-toggle { bottom: 20px; right: 20px; left: auto; width: 45px; height: 45px;}
             .col-info {text-align: center; }
-            .col-info h4 { justify-content: center; } /* Centra SVG su Mobili!*/
+            .col-info h4 { justify-content: center; }
+            
+            /* --- MODIFICA AGGIUNTA QUI --- */
+            /* Annulla l'effetto hover/espanso azzurro sui dispositivi mobili */
+            .activity-card:hover, 
+            .activity-card:focus-visible, 
+            .activity-card[aria-expanded="true"] { 
+                border-color: var(--border); 
+                background: var(--bg-surface); 
+                transform: none; 
+                box-shadow: none; 
+            }
+            
+            /* (Opzionale ma consigliato) Mantiene i colori di base per la card "Certificato" che nasce già azzurra di default */
+            .ac-cert:hover, 
+            .ac-cert:focus-visible, 
+            .ac-cert[aria-expanded="true"] { 
+                border-color: var(--primary-blue); 
+                background: rgba(59, 130, 246, 0.05); 
+                transform: none; 
+                box-shadow: none; 
+            }
         }
         
         @media (prefers-reduced-motion: reduce) {
