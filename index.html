@@ -131,7 +131,6 @@
         .main-header { padding: 35px 20px 35px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; margin-bottom: 30px; transition: background-color 0.4s ease, border-color 0.4s ease; }
         .mim-container { display: flex; align-items: center; justify-content: center; width: 100%; text-align: center; margin: 0 auto; }
         
-        /* Aumentata l'altezza dell'immagine del LOGO MIM qui a 85px per farla saltare all'occhio molto di più. */
         .nav-mim-logo { height: 85px; width: auto; max-width: 90%; object-fit: contain; display: block; margin: 0 auto; transition: filter 0.4s ease; }
         
         body.light-mode .nav-mim-logo { filter: brightness(0); }
@@ -214,7 +213,8 @@
         }
 
         .mim-footer-wrap { width: 100%; display: flex; justify-content: center; }
-        .footer-logo-mim { height: 50px; display: block; margin: 0 auto 30px; object-fit: contain; filter: grayscale(20%); opacity: 0.8; transition: all 0.4s ease; }
+        /* GRANDEZZA LOGO MIM AUMENTATA QUI A 85px */
+        .footer-logo-mim { height: 120px; display: block; margin: 0 auto 30px; object-fit: contain; filter: grayscale(20%); opacity: 0.8; transition: all 0.4s ease; }
         .footer-logo-mim:hover { filter: grayscale(0%); opacity: 1; }
         body.light-mode .footer-logo-mim { opacity: 0.95; filter: grayscale(20%) brightness(0.4); } 
         body.light-mode .footer-logo-mim:hover { filter: grayscale(0%) brightness(1); }
@@ -243,7 +243,6 @@
         @media (max-width: 768px) {
             .main-header { padding: 30px 15px 30px; border-radius: 0 0 30px 30px; }
             .year-badge { position: relative; top: 0; right: 0; margin-top: 25px; width: auto;}
-            /* Resa anch'essa considerevolmente più grande sul telefono passando a 65px (era 45px) */
             .nav-mim-logo { height: 65px; } 
             
             .nav-school-logo { height: 80px; }
@@ -258,6 +257,8 @@
             #theme-toggle { bottom: 20px; right: 20px; left: auto; width: 45px; height: 45px;}
             .col-info {text-align: center; }
             .col-info h4 { justify-content: center; } 
+            /* Ridimensionamento opzionale su mobile per il logo del footer */
+            .footer-logo-mim { height: 65px; }
         }
         
         @media (prefers-reduced-motion: reduce) {
@@ -310,7 +311,6 @@
             <p>Attestato per l'accertamento dell'Alternanza Scuola Lavoro. <br>Documento generato a norma, emesso in nome di <b>Harzafi Adam</b>.</p>
         </section>
 
-        <!-- Container Ore Dinamico-->
         <section class="dashboard glass-panel scroll-reveal">
             <div class="dashboard-header-flex">
                 <p class="hours-title">Montante Ore Accumulato</p>
@@ -529,7 +529,7 @@
         <footer class="glass-panel super-footer scroll-reveal">
             
             <div class="mim-footer-wrap">
-                <img src="https://i.ibb.co/39k5Wq52/Logo-MIM.png" class="footer-logo-mim" alt="Logo Ministero Centrato">
+                <img src="Logo-MIM.png" class="footer-logo-mim" alt="Logo Ministero Centrato">
             </div>
 
             <div class="grid-infos">
