@@ -121,7 +121,6 @@
         .splash-logos { display: flex; align-items: center; gap: 40px; margin-bottom: 50px; }
         .splash-logos img { height: 85px; object-fit: contain; }
         .loader-container { width: 240px; height: 3px; background: var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 25px; transform: translate3d(0,0,0);}
-        /* Accelerata al 0.9s per abbinarla esattamente alla sparizione dello schermo al 1° secondo */
         .loader-progress { width: 0%; height: 100%; background: var(--primary-blue); box-shadow: 0 0 10px var(--primary-blue); animation: loadProgress 0.9s cubic-bezier(0.1, 0, 0.2, 1) forwards; }
         .welcome-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 5px; color: var(--text-muted); font-weight: 600; }
         .eu-logo-splash { position: absolute; bottom: 40px; max-width: 320px; height: auto; }
@@ -131,7 +130,10 @@
 
         .main-header { padding: 35px 20px 35px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; margin-bottom: 30px; transition: background-color 0.4s ease, border-color 0.4s ease; }
         .mim-container { display: flex; align-items: center; justify-content: center; width: 100%; text-align: center; margin: 0 auto; }
-        .nav-mim-logo { height: 55px; width: auto; max-width: 90%; object-fit: contain; display: block; margin: 0 auto; transition: filter 0.4s ease; }
+        
+        /* Aumentata l'altezza dell'immagine del LOGO MIM qui a 85px per farla saltare all'occhio molto di più. */
+        .nav-mim-logo { height: 85px; width: auto; max-width: 90%; object-fit: contain; display: block; margin: 0 auto; transition: filter 0.4s ease; }
+        
         body.light-mode .nav-mim-logo { filter: brightness(0); }
         .header-divider { width: 100%; max-width: 600px; height: 1px; background-color: var(--border); margin: 30px 0; }
         .school-container { display: flex; flex-direction: column; align-items: center; text-align: center; }
@@ -168,7 +170,6 @@
         .activity-card {
             background: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px; padding: 25px; margin-bottom: 25px; cursor: pointer;
             transition: border-color 0.3s ease, background 0.3s ease, transform 0.3s ease, padding 0.3s ease; position: relative; overflow: hidden; color: var(--text-main); text-align: left; width: 100%; --mouse-x: 50%; --mouse-y: 50%; display: block; 
-            /* Fix iOS tapping fluidità */
             -webkit-appearance: none; appearance: none;
             will-change: transform, box-shadow;
         }
@@ -242,7 +243,10 @@
         @media (max-width: 768px) {
             .main-header { padding: 30px 15px 30px; border-radius: 0 0 30px 30px; }
             .year-badge { position: relative; top: 0; right: 0; margin-top: 25px; width: auto;}
-            .nav-mim-logo { height: 45px; } .nav-school-logo { height: 80px; }
+            /* Resa anch'essa considerevolmente più grande sul telefono passando a 65px (era 45px) */
+            .nav-mim-logo { height: 65px; } 
+            
+            .nav-school-logo { height: 80px; }
             .hero h1 { font-size: 2rem; }
             .dashboard { padding: 40px 20px;}
             .hours-value { font-size: 3.8rem; flex-direction: column; align-items: center; gap:0;}
@@ -584,9 +588,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const finalValue = 113.30;
-            // ----------------------------------------
-            // DURATA ABBASSATA A 1.0 SECONDO (1000ms) 
-            // ----------------------------------------
             const splashDuration = 1000;
             
             const bodyObj = document.body;
