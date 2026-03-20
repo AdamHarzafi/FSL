@@ -267,6 +267,22 @@
         }
         
         .google-btn-wrapper { display: flex; justify-content: center; width: 100%; margin-bottom: 10px;}
+        
+        /* PULSANTE CUSTOM GOOGLE */
+        .custom-google-btn {
+            width: 100%; padding: 14px 20px; background: #ffffff;
+            border: 2px solid #e5e7eb; border-radius: 30px;
+            font-size: 0.95rem; font-weight: 800; color: #374151;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); outline: none;
+        }
+        .custom-google-btn:hover {
+            border-color: #d1d5db; background: #f9fafb; transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+        }
+        .custom-google-btn:active { transform: translateY(0); box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        .google-logo { width: 22px; height: 22px; flex-shrink: 0; }
 
         #forgot-view { display: none; }
         #teacher-forgot-msg { display: none; text-align: center; line-height: 1.6; font-weight: 600; margin-bottom: 20px;}
@@ -477,6 +493,10 @@
             .l-hero-text h1 { font-size: 2rem; }
             .hours-value { font-size: 3rem; }
             .gfx-circle { max-width: 240px; }
+            
+            .custom-google-btn { padding: 12px 10px; gap: 8px; }
+            .custom-google-btn span { font-size: 0.8rem; letter-spacing: -0.3px; }
+            .google-logo { width: 18px; height: 18px; }
         }
     </style>
 </head>
@@ -614,7 +634,15 @@
                     </div>
                     
                     <div class="google-btn-wrapper">
-                        <div id="googleSignInDiv"></div>
+                        <button type="button" id="custom-google-btn" class="custom-google-btn">
+                            <svg class="google-logo" viewBox="0 0 48 48">
+                                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                            </svg>
+                            <span>ACCEDI CON L'ACCOUNT SCOLASTICO</span>
+                        </button>
                     </div>
                     <div class="error-msg" id="google-login-error" style="margin-top: 5px;"></div>
                 </form>
@@ -951,38 +979,59 @@
 
             let selectedRole = 'studente'; 
 
-            /* --- LOGICA PER IL LOGIN CON GOOGLE --- */
-            function decodeJwtResponse(token) {
-                let base64Url = token.split('.')[1];
-                let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                let jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                return JSON.parse(jsonPayload);
+            /* --- LOGICA CUSTOM PER IL LOGIN CON GOOGLE TRAMITE TOKEN CLIENT --- */
+            let googleTokenClient;
+
+            function initGoogleAuth() {
+                if (typeof google !== 'undefined' && google.accounts) {
+                    googleTokenClient = google.accounts.oauth2.initTokenClient({
+                        client_id: "805714025630-s0l9r63ra10csarlcloqlnmcplak4g27.apps.googleusercontent.com",
+                        scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+                        callback: (tokenResponse) => {
+                            if (tokenResponse && tokenResponse.access_token) {
+                                fetchUserInfo(tokenResponse.access_token);
+                            }
+                        }
+                    });
+                } else {
+                    setTimeout(initGoogleAuth, 100);
+                }
             }
 
-            window.handleGoogleCredentialResponse = (response) => {
+            function fetchUserInfo(accessToken) {
+                fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    handleGoogleUser(data.email, data.name);
+                })
+                .catch(err => {
+                    showGoogleError("Si è verificato un errore durante l'accesso con Google.");
+                });
+            }
+
+            function handleGoogleUser(email, name) {
                 const googleErrorObj = document.getElementById('google-login-error');
                 googleErrorObj.style.display = 'none';
 
-                const payload = decodeJwtResponse(response.credential);
-                const userEmail = payload.email.toLowerCase();
-                const userName = payload.name;
+                const userEmail = (email || '').toLowerCase();
+                const userName = name || 'Utente';
 
                 if (selectedRole === 'studente') {
                     if (userEmail.endsWith('@studenti.itisavogadro.it')) {
                         entraNelPortaleGoogle(userName);
                     } else {
-                        showGoogleError("Impossibile accedere con Google perché non hai usato l'account scolastico che termina con @studenti.itisavogadro.it");
+                        showGoogleError("Devi accedere con l'account @studenti.itisavogadro.it");
                     }
                 } else { // docente
                     if (userEmail.endsWith('@itisavogadro.it')) {
                         entraNelPortaleGoogle(userName);
                     } else {
-                        showGoogleError("Impossibile accedere con Google perché non hai usato l'account scolastico che termina con @itisavogadro.it");
+                        showGoogleError("Devi accedere con l'account @itisavogadro.it");
                     }
                 }
-            };
+            }
 
             function showGoogleError(msg) {
                 const googleErrorObj = document.getElementById('google-login-error');
@@ -998,22 +1047,16 @@
                 entraNelPortale();
             }
 
-            // Inizializza pulsante di Google
-            function renderGoogleButton() {
-                if (typeof google !== 'undefined' && google.accounts) {
-                    google.accounts.id.initialize({
-                        client_id: "805714025630-s0l9r63ra10csarlcloqlnmcplak4g27.apps.googleusercontent.com",
-                        callback: window.handleGoogleCredentialResponse
-                    });
-                    google.accounts.id.renderButton(
-                        document.getElementById("googleSignInDiv"),
-                        { theme: "outline", size: "large", width: 380, shape: "pill", text: "continue_with" }
-                    );
+            document.getElementById('custom-google-btn').addEventListener('click', () => {
+                if (googleTokenClient) {
+                    googleTokenClient.requestAccessToken();
                 } else {
-                    setTimeout(renderGoogleButton, 100);
+                    showGoogleError("Servizio Google non ancora caricato. Riprova tra un istante.");
                 }
-            }
-            renderGoogleButton();
+            });
+
+            // Avvio inizializzazione Google Client al lancio della pagina
+            initGoogleAuth();
             /* ------------------------------------------- */
 
             // Animazioni allo scroll (Scroll Reveal)
