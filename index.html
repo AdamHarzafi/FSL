@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Registro Formazione PCTO - Harzafi Adam</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- LIBRERIA GOOGLE PER IL LOGIN -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <style>
         :root {
             /* TEMA AZZURRO */
@@ -234,7 +238,6 @@
         }
         .login-input:focus { border-color: #0284c7; background: #fff; box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1); }
 
-        /* PULSANTI MODALE AGGIORNATI COME IL DESIGN DELLA LANDING PAGE */
         .btn-submit {
             width: 100%; padding: 16px; background: var(--primary); color: white;
             border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 800;
@@ -249,6 +252,21 @@
 
         .fade-form { animation: fadeIn 0.4s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* DIVIDER GOOGLE */
+        .divider-container {
+            display: flex; align-items: center; text-align: center; margin: 25px 0 20px;
+        }
+        .divider-container::before, .divider-container::after {
+            content: ''; flex: 1; border-bottom: 2px solid #f1f5f9;
+        }
+        .divider-container:not(:empty)::before { margin-right: 15px; }
+        .divider-container:not(:empty)::after { margin-left: 15px; }
+        .divider-text {
+            font-size: 0.8rem; font-weight: 800; color: #94a3b8; letter-spacing: 0.5px;
+        }
+        
+        .google-btn-wrapper { display: flex; justify-content: center; width: 100%; margin-bottom: 10px;}
 
         #forgot-view { display: none; }
         #teacher-forgot-msg { display: none; text-align: center; line-height: 1.6; font-weight: 600; margin-bottom: 20px;}
@@ -340,7 +358,6 @@
         .tl-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;}
         .tl-content { flex: 1; }
         
-        /* AGGIORNATO BADGE VERDE */
         .tl-date { color: var(--text-light); font-weight: 900; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; display: inline-block; letter-spacing: 0.5px;}
         .special-badge-date { background: var(--success); color: #fff; padding: 4px 10px; border-radius: 6px; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
         
@@ -392,9 +409,6 @@
         .badge-views strong { color: #fff; font-size: 1.05rem;}
         .copyright-text { font-size: 1rem; color: #fff; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;}
 
-        /* =================================================
-           PERFEZIONE MOBILE RESPONSIVE (SMARTPHONE)
-        ================================================= */
         @media (max-width: 900px) {
             .l-nav-container { padding: 5px 0; }
             .l-nav { padding: 10px 5%; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;}
@@ -593,6 +607,16 @@
                     </div>
                     
                     <button type="button" id="login-submit" class="btn-submit">ENTRA</button>
+                    
+                    <!-- ACCESSO TRAMITE GOOGLE -->
+                    <div class="divider-container">
+                        <span class="divider-text">- OPPURE CON -</span>
+                    </div>
+                    
+                    <div class="google-btn-wrapper">
+                        <div id="googleSignInDiv"></div>
+                    </div>
+                    <div class="error-msg" id="google-login-error" style="margin-top: 5px;"></div>
                 </form>
             </div>
 
@@ -758,7 +782,6 @@
                         <div class="tl-dropdown"><div class="tl-dropdown-inner"><div class="tl-ext-info">Progetto Porte Aperte. Spiegato ed insegnato a potenziali neo studenti i laboratori. Solo 3 studenti di quest'anno hanno partecipato.</div></div></div>
                     </div>
 
-                    <!-- BADGE VERDE CORRETTO -->
                     <div class="timeline-item ac-cert" aria-expanded="false">
                         <div class="tl-header">
                             <div class="tl-content">
@@ -926,6 +949,73 @@
                 { cognome: "YU", cf: "YUXNDR09H16L219F" }
             ];
 
+            let selectedRole = 'studente'; 
+
+            /* --- LOGICA PER IL LOGIN CON GOOGLE --- */
+            function decodeJwtResponse(token) {
+                let base64Url = token.split('.')[1];
+                let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                let jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            }
+
+            window.handleGoogleCredentialResponse = (response) => {
+                const googleErrorObj = document.getElementById('google-login-error');
+                googleErrorObj.style.display = 'none';
+
+                const payload = decodeJwtResponse(response.credential);
+                const userEmail = payload.email.toLowerCase();
+                const userName = payload.name;
+
+                if (selectedRole === 'studente') {
+                    if (userEmail.endsWith('@studenti.itisavogadro.it')) {
+                        entraNelPortaleGoogle(userName);
+                    } else {
+                        showGoogleError("Impossibile accedere con Google perché non hai usato l'account scolastico che termina con @studenti.itisavogadro.it");
+                    }
+                } else { // docente
+                    if (userEmail.endsWith('@itisavogadro.it')) {
+                        entraNelPortaleGoogle(userName);
+                    } else {
+                        showGoogleError("Impossibile accedere con Google perché non hai usato l'account scolastico che termina con @itisavogadro.it");
+                    }
+                }
+            };
+
+            function showGoogleError(msg) {
+                const googleErrorObj = document.getElementById('google-login-error');
+                googleErrorObj.innerText = msg;
+                googleErrorObj.style.display = 'block';
+                googleErrorObj.style.animation = 'none';
+                void googleErrorObj.offsetWidth; // Trigger reflow per riavviare animazione
+                googleErrorObj.style.animation = 'shake 0.4s';
+            }
+
+            function entraNelPortaleGoogle(name) {
+                document.getElementById('username-input').value = name;
+                entraNelPortale();
+            }
+
+            // Inizializza pulsante di Google
+            function renderGoogleButton() {
+                if (typeof google !== 'undefined' && google.accounts) {
+                    google.accounts.id.initialize({
+                        client_id: "805714025630-s0l9r63ra10csarlcloqlnmcplak4g27.apps.googleusercontent.com",
+                        callback: window.handleGoogleCredentialResponse
+                    });
+                    google.accounts.id.renderButton(
+                        document.getElementById("googleSignInDiv"),
+                        { theme: "outline", size: "large", width: 380, shape: "pill", text: "continue_with" }
+                    );
+                } else {
+                    setTimeout(renderGoogleButton, 100);
+                }
+            }
+            renderGoogleButton();
+            /* ------------------------------------------- */
+
             // Animazioni allo scroll (Scroll Reveal)
             const reveals = document.querySelectorAll('.reveal');
             const revealOnScroll = () => {
@@ -970,8 +1060,6 @@
             const forgotError = document.getElementById('forgot-error');
             const forgotResult = document.getElementById('forgot-result');
 
-            let selectedRole = 'studente'; 
-
             // LOGICA MOSTRA/NASCONDI PASSWORD
             togglePasswordBtn.addEventListener('click', () => {
                 if (passInput.type === 'password') {
@@ -997,6 +1085,9 @@
                 if(forgotView.style.display === 'block'){
                     setupForgotView();
                 }
+                
+                // Nascondo eventuali vecchi errori google
+                document.getElementById('google-login-error').style.display = 'none';
             }));
 
             openLoginBtns.forEach(btn => btn.addEventListener('click', (e) => {
@@ -1025,6 +1116,7 @@
                 errorMsg.style.display = 'none';
                 forgotError.style.display = 'none';
                 forgotResult.style.display = 'none';
+                document.getElementById('google-login-error').style.display = 'none';
                 userInput.value = '';
                 passInput.value = '';
                 passInput.type = 'password';
@@ -1071,7 +1163,7 @@
                 }
             });
 
-            // GESTIONE ACCESSO
+            // GESTIONE ACCESSO TRADIZIONALE
             const handleLogin = () => {
                 const pass = passInput.value.trim();
                 
@@ -1097,7 +1189,7 @@
 
             function entraNelPortale() {
                 let uName = userInput.value.trim();
-                if (!uName) uName = "Studente";
+                if (!uName) uName = selectedRole === 'studente' ? "Studente" : "Docente";
                 
                 const formattedName = uName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
                 
