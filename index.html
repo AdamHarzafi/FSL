@@ -276,7 +276,7 @@
         
         .google-btn-wrapper { display: flex; justify-content: center; width: 100%; margin-bottom: 10px;}
         
-        /* PULSANTE CUSTOM GOOGLE */
+        /* PULSANTE CUSTOM GOOGLE & HARZAFI ID */
         .custom-google-btn {
             width: 100%; padding: 14px 20px; background: #ffffff;
             border: 2px solid #e5e7eb; border-radius: 30px;
@@ -434,6 +434,66 @@
         .badge-views strong { color: #fff; font-size: 1.05rem;}
         .copyright-text { font-size: 1rem; color: #fff; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;}
 
+        /* =================================================
+           HARZAFI ID - MODALE BOTTOM SHEET (Stile iOS NFC)
+        ================================================= */
+        .hid-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+            z-index: 100000; display: flex; align-items: flex-end; justify-content: center;
+            opacity: 1; transition: opacity 0.4s ease;
+        }
+        .hid-overlay.hidden { opacity: 0; pointer-events: none; }
+
+        .hid-bottom-sheet {
+            background: #ffffff; width: 100%; max-width: 460px;
+            border-radius: 35px 35px 0 0; padding: 40px 25px 35px;
+            transform: translateY(0); transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative; text-align: center; box-shadow: 0 -15px 40px rgba(0,0,0,0.15);
+        }
+        .hid-overlay.hidden .hid-bottom-sheet { transform: translateY(100%); }
+
+        .hid-close-top {
+            position: absolute; top: 18px; right: 20px; background: #f1f5f9; border: none;
+            width: 32px; height: 32px; border-radius: 50%; font-size: 1.2rem; font-weight: bold;
+            color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; outline: none;
+        }
+        .hid-close-top:hover { background: #e2e8f0; color: #0f172a; }
+
+        .hid-title { font-size: 1.7rem; font-weight: 800; color: #000; margin-bottom: 8px; letter-spacing: -0.5px;}
+        .hid-subtitle { font-size: 1.05rem; font-weight: 500; color: #475569; margin-bottom: 40px; line-height: 1.4;}
+
+        /* Animazione Cerchio Telefono (Simil Screenshot) */
+        .hid-anim-container { display: flex; justify-content: center; align-items: center; margin-bottom: 40px; }
+        .hid-circle {
+            width: 130px; height: 130px; border-radius: 50%; border: 6px solid #3b82f6; 
+            display: flex; justify-content: center; align-items: center; position: relative;
+            background: rgba(59, 130, 246, 0.05);
+            animation: hid-pulse 2.5s infinite;
+        }
+        .hid-phone-img { width: 130px; height: auto; object-fit: contain; }
+        
+        @keyframes hid-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 0 25px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+
+        .hid-manual-link {
+            color: var(--primary); font-weight: 700; font-size: 1rem; text-decoration: none;
+            display: inline-block; margin-bottom: 35px; cursor: pointer; transition: opacity 0.2s;
+        }
+        .hid-manual-link:hover { opacity: 0.7; text-decoration: underline; }
+
+        .hid-btn-cancel {
+            width: 100%; background: #eff6ff; color: #3b82f6; border: none; padding: 18px;
+            border-radius: 25px; font-size: 1.15rem; font-weight: 800; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1); outline: none;
+        }
+        .hid-btn-cancel:hover { background: #dbeafe; transform: translateY(-2px); }
+
+        /* Media Queries standard vecchie */
         @media (max-width: 900px) {
             .l-nav-container { padding: 5px 0; }
             .l-nav { padding: 10px 5%; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;}
@@ -654,6 +714,15 @@
                         </button>
                     </div>
                     <div class="error-msg" id="google-login-error" style="margin-top: 5px;"></div>
+
+                    <!-- NUOVO PULSANTE HARZAFI ID -->
+                    <div class="google-btn-wrapper" style="margin-top: 15px;">
+                        <button type="button" id="btn-harzafi-id" class="custom-google-btn" style="border-color: #0284c7; background: #f8fafc;">
+                            <img src="https://i.ibb.co/mVN9xcHB/LOGO-HARZAFI.png" alt="Logo Harzafi" class="google-logo" style="width: auto; height: 20px;">
+                            <span style="color: #0284c7;">ACCEDI CON HARZAFI ID</span>
+                        </button>
+                    </div>
+
                 </form>
             </div>
 
@@ -981,6 +1050,46 @@
             <p class="copyright-text">Harzafi © - Tutti i diritti riservati</p>
         </div>
     </footer>
+
+    <!-- ======================================================= -->
+    <!-- MODALE HARZAFI ID (BOTTOM SHEET TIPO APPLE NFC)         -->
+    <!-- ======================================================= -->
+    <div id="hid-modal" class="hid-overlay hidden">
+        <div class="hid-bottom-sheet">
+            <button id="hid-close-btn" class="hid-close-top">&times;</button>
+
+            <!-- SCHERMATA 1: SCANSIONE -->
+            <div id="hid-scan-view">
+                <h2 class="hid-title">Pronto per scannerizzare.</h2>
+                <p class="hid-subtitle">Tieni il dispositivo vicino all'ID Harzafi. L'operazione può richiedere un po' di tempo.</p>
+                
+                <div class="hid-anim-container">
+                    <div class="hid-circle">
+                        <!-- Immagine personalizzata inserita al posto dell'icona -->
+                        <img src="https://i.ibb.co/0VtcVBkG/upscalemedia-transformed.png" alt="Dispositivo NFC" class="hid-phone-img">
+                    </div>
+                </div>
+
+                <a id="hid-open-manual" class="hid-manual-link">Non funziona? Inserisci L'HID</a>
+                
+                <button id="hid-cancel-btn" class="hid-btn-cancel">Annullare</button>
+            </div>
+
+            <!-- SCHERMATA 2: INSERIMENTO MANUALE -->
+            <div id="hid-manual-view" style="display: none; text-align: left;">
+                <h2 class="hid-title" style="text-align: center;">Inserisci Harzafi ID</h2>
+                <p class="hid-subtitle" style="text-align: center;">Digita il codice univoco a 24 cifre.</p>
+                
+                <div class="input-group">
+                    <input type="text" id="hid-input" class="login-input" placeholder="XXXXXXXXXXXXXXXXXXXXXXXX" maxlength="24" style="text-align: center; letter-spacing: 2px;">
+                    <div class="error-msg" id="hid-error">HID non valido. Riprova.</div>
+                </div>
+                
+                <button type="button" id="hid-submit-btn" class="btn-submit">VERIFICA E ACCEDI</button>
+                <button type="button" id="hid-back-btn" class="btn-back-login" style="width:100%; margin-top:20px; background:transparent; border:none; font-weight:800; color:#64748b; cursor:pointer; font-size:0.95rem;">← Torna alla scansione</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -1358,6 +1467,78 @@
                     });
                 });
             });
+
+
+            // ==========================================
+            // LOGICA HARZAFI ID (HID)
+            // ==========================================
+            const HID_VALIDO = "849382019483720184758392"; 
+            
+            const btnHarzafiId = document.getElementById('btn-harzafi-id');
+            const hidModal = document.getElementById('hid-modal');
+            const hidScanView = document.getElementById('hid-scan-view');
+            const hidManualView = document.getElementById('hid-manual-view');
+            
+            const hidCloseBtn = document.getElementById('hid-close-btn');
+            const hidCancelBtn = document.getElementById('hid-cancel-btn');
+            const hidOpenManual = document.getElementById('hid-open-manual');
+            const hidBackBtn = document.getElementById('hid-back-btn');
+            const hidSubmitBtn = document.getElementById('hid-submit-btn');
+            const hidInput = document.getElementById('hid-input');
+            const hidError = document.getElementById('hid-error');
+
+            function apriModaleHID() {
+                hidModal.classList.remove('hidden');
+                hidScanView.style.display = 'block';
+                hidManualView.style.display = 'none';
+                hidInput.value = '';
+                hidError.style.display = 'none';
+            }
+
+            function chiudiModaleHID() {
+                hidModal.classList.add('hidden');
+            }
+
+            // Apri popup dal form login
+            btnHarzafiId.addEventListener('click', apriModaleHID);
+
+            // Chiudi popup con "X" o "Annullare"
+            hidCloseBtn.addEventListener('click', chiudiModaleHID);
+            hidCancelBtn.addEventListener('click', chiudiModaleHID);
+
+            // Passa a inserimento manuale
+            hidOpenManual.addEventListener('click', (e) => {
+                e.preventDefault();
+                hidScanView.style.display = 'none';
+                hidManualView.style.display = 'block';
+                hidInput.focus();
+            });
+
+            // Torna indietro alla schermata di scansione
+            hidBackBtn.addEventListener('click', () => {
+                hidManualView.style.display = 'none';
+                hidScanView.style.display = 'block';
+                hidError.style.display = 'none';
+            });
+
+            // Verifica dell'HID inserito manualmente
+            hidSubmitBtn.addEventListener('click', () => {
+                const valoreInserito = hidInput.value.trim();
+                
+                if (valoreInserito === HID_VALIDO) {
+                    // Successo! 
+                    chiudiModaleHID(); 
+                    document.getElementById('username-input').value = "Utente HID"; 
+                    entraNelPortale(); // QUESTA è la funzione che avvia la dashboard
+                } else {
+                    // Errore
+                    hidError.style.display = 'block';
+                    hidError.style.animation = 'none';
+                    void hidError.offsetWidth; // Reflow
+                    hidError.style.animation = 'shake 0.4s';
+                }
+            });
+
         });
     </script>
 </body>
