@@ -225,6 +225,14 @@
             font-weight: 700; font-size: 0.95rem; margin-bottom: 25px;
         }
 
+        #btn-rules-banner {
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        #btn-rules-banner:hover {
+            background: #e0f2fe; transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+        }
+
         .input-group { margin-bottom: 22px; text-align: left;}
         .label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .label-row label { font-weight: 800; color: #374151; font-size: 0.95rem; }
@@ -284,7 +292,8 @@
         .custom-google-btn:active { transform: translateY(0); box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
         .google-logo { width: 22px; height: 22px; flex-shrink: 0; }
 
-        #forgot-view { display: none; }
+        #forgot-view, #rules-view { display: none; }
+        
         #teacher-forgot-msg { display: none; text-align: center; line-height: 1.6; font-weight: 600; margin-bottom: 20px;}
         .result-box { display: none; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 15px; border-radius: 12px; text-align: center; font-weight: 800; margin-top: 15px; animation: fadeIn 0.4s;}
 
@@ -602,7 +611,7 @@
 
             <!-- FORM DI LOGIN -->
             <div id="login-view" class="fade-form">
-                <div class="login-rules-banner">Regole di accesso dal 01/10/2021</div>
+                <div class="login-rules-banner" id="btn-rules-banner">Regole di accesso dal 01/10/2021</div>
                 <form id="login-form">
                     <div class="input-group">
                         <div class="label-row">
@@ -651,7 +660,7 @@
             <!-- FORM RECUPERO PASSWORD -->
             <div id="forgot-view" class="fade-form">
                 <div id="student-forgot-form">
-                    <div class="login-rules-banner" style="background:#fef2f2; border-color:#fecaca; color:#dc2626;">Recupero Password Classe 3°A</div>
+                    <div class="login-rules-banner" style="background:#fef2f2; border-color:#fecaca; color:#dc2626; cursor:default;">Recupero Password Classe 3°A</div>
                     <div class="input-group">
                         <label style="font-weight:800; color:#374151; display:block; margin-bottom:8px;">Inserisci il tuo cognome:</label>
                         <input type="text" id="cognome-input" class="login-input" placeholder="Es. ROSSI" autocomplete="off" style="text-transform: uppercase;">
@@ -671,7 +680,35 @@
                     <a href="mailto:s11205413d@studenti.itisavogadro.it" style="color:var(--primary); font-weight:900; text-decoration:none;">Invia Email a Adam Harzafi</a>
                 </div>
 
-                <button type="button" id="btn-back-login" style="width:100%; margin-top:20px; background:transparent; border:none; font-weight:800; color:#64748b; cursor:pointer; font-size:0.95rem; transition: color 0.2s;">← Torna al Login</button>
+                <button type="button" class="btn-back-login" style="width:100%; margin-top:20px; background:transparent; border:none; font-weight:800; color:#64748b; cursor:pointer; font-size:0.95rem; transition: color 0.2s;">← Torna al Login</button>
+            </div>
+
+            <!-- FORM REGOLE ACCESSO -->
+            <div id="rules-view" class="fade-form">
+                <div style="background:#f0f9ff; border:1px solid #bae6fd; padding:15px; border-radius:12px; margin-bottom:20px;">
+                    <p style="font-size:0.95rem; color:#0369a1; line-height:1.5; font-weight:600; text-align:justify;">
+                        Per restare in linea con gli obblighi del Decreto Semplificazioni, l'accesso tramite credenziali standard è stato limitato. Se non rientri in una delle seguenti categorie, dovrai utilizzare i nuovi sistemi di autenticazione previsti dalla legge:
+                    </p>
+                </div>
+                <ul style="list-style:none; padding:0; margin-bottom:25px;">
+                    <li style="padding:12px 15px; background:#f8fafc; border-left:4px solid var(--primary); border-radius:6px; margin-bottom:10px; font-weight:700; color:var(--text-dark); font-size:0.95rem; display: flex; align-items: center; gap: 10px;">
+                        <svg viewBox="0 0 24 24" style="width:20px; fill:var(--primary);"><path d="M12,3L1,9L4,10.63V17L12,21L20,17V10.63L23,9M12,5.16L19.5,9L12,12.84L4.5,9M18,16.08L12,19.08L6,16.08V11.72L12,15L18,11.72V16.08Z"/></svg>
+                        Studenti (Servizi dedicati e PCTO)
+                    </li>
+                    <li style="padding:12px 15px; background:#f8fafc; border-left:4px solid var(--primary); border-radius:6px; margin-bottom:10px; font-weight:700; color:var(--text-dark); font-size:0.95rem; display: flex; align-items: center; gap: 10px;">
+                        <svg viewBox="0 0 24 24" style="width:20px; fill:var(--primary);"><path d="M12,15C7.58,15 4,16.79 4,19V21H20V19C20,16.79 16.42,15 12,15M8,9A4,4 0 0,0 12,13A4,4 0 0,0 16,9M11.5,2A2.5,2.5 0 0,0 9,4.5A2.5,2.5 0 0,0 11.5,7A2.5,2.5 0 0,0 14,4.5A2.5,2.5 0 0,0 11.5,2Z"/></svg>
+                        Personale Amministrazione Centrale
+                    </li>
+                    <li style="padding:12px 15px; background:#f8fafc; border-left:4px solid var(--primary); border-radius:6px; margin-bottom:10px; font-weight:700; color:var(--text-dark); font-size:0.95rem; display: flex; align-items: center; gap: 10px;">
+                        <svg viewBox="0 0 24 24" style="width:20px; fill:var(--primary);"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                        Personale Scuola (DS, DSGA, Assistenti)
+                    </li>
+                    <li style="padding:12px 15px; background:#f8fafc; border-left:4px solid var(--primary); border-radius:6px; font-weight:700; color:var(--text-dark); font-size:0.95rem; display: flex; align-items: center; gap: 10px;">
+                        <svg viewBox="0 0 24 24" style="width:20px; fill:var(--primary);"><path d="M4,1H20A1,1 0 0,1 21,2V6A1,1 0 0,1 20,7H4A1,1 0 0,1 3,6V2A1,1 0 0,1 4,1M4,9H20A1,1 0 0,1 21,10V14A1,1 0 0,1 20,15H4A1,1 0 0,1 3,14V10A1,1 0 0,1 4,9M4,17H20A1,1 0 0,1 21,18V22A1,1 0 0,1 20,23H4A1,1 0 0,1 3,22V18A1,1 0 0,1 4,17M9,5H10V3H9V5M9,13H10V11H9V13M9,21H10V19H9V21M5,5H7V3H5V5M5,13H7V11H5V13M5,21H7V19H5V21Z"/></svg>
+                        Utenti SIDI
+                    </li>
+                </ul>
+                <button type="button" class="btn-back-login" style="width:100%; margin-top:10px; background:transparent; border:none; font-weight:800; color:#64748b; cursor:pointer; font-size:0.95rem; transition: color 0.2s;">← Torna al Login</button>
             </div>
         </div>
     </div>
@@ -1055,7 +1092,6 @@
                 }
             });
 
-            // Avvio inizializzazione Google Client al lancio della pagina
             initGoogleAuth();
             /* ------------------------------------------- */
 
@@ -1086,8 +1122,11 @@
             
             const loginView = document.getElementById('login-view');
             const forgotView = document.getElementById('forgot-view');
+            const rulesView = document.getElementById('rules-view');
+            
+            const btnRulesBanner = document.getElementById('btn-rules-banner');
             const btnForgot = document.getElementById('btn-forgot-pass');
-            const btnBackLogin = document.getElementById('btn-back-login');
+            const btnsBackLogin = document.querySelectorAll('.btn-back-login');
 
             const studentForgotForm = document.getElementById('student-forgot-form');
             const teacherForgotMsg = document.getElementById('teacher-forgot-msg');
@@ -1129,6 +1168,12 @@
                     setupForgotView();
                 }
                 
+                // Se mi trovo nelle regole chiudo la view per evitare collisioni grafiche
+                rulesView.style.display = 'none';
+                if(forgotView.style.display !== 'block') {
+                    loginView.style.display = 'block';
+                }
+                
                 // Nascondo eventuali vecchi errori google
                 document.getElementById('google-login-error').style.display = 'none';
             }));
@@ -1143,19 +1188,28 @@
                 loginModal.classList.add('hidden');
             });
 
+            // Apertura Modale Regole di Accesso
+            btnRulesBanner.addEventListener('click', () => {
+                loginView.style.display = 'none';
+                rulesView.style.display = 'block';
+            });
+
+            // Apertura recupero password
             btnForgot.addEventListener('click', () => {
                 loginView.style.display = 'none';
                 forgotView.style.display = 'block';
                 setupForgotView();
             });
 
-            btnBackLogin.addEventListener('click', () => {
+            // Ritorna al Login dalle varie schermate
+            btnsBackLogin.forEach(btn => btn.addEventListener('click', () => {
                 resetModal();
-            });
+            }));
 
             function resetModal() {
                 loginView.style.display = 'block';
                 forgotView.style.display = 'none';
+                rulesView.style.display = 'none';
                 errorMsg.style.display = 'none';
                 forgotError.style.display = 'none';
                 forgotResult.style.display = 'none';
