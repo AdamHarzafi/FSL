@@ -139,9 +139,18 @@
         .partner-logos {
             max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 5%; flex-wrap: wrap; gap: 20px;
         }
-        .partner-logos span { color: #fff; font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; opacity: 0.95; transition: opacity 0.3s;}
-        .partner-logos span:hover { opacity: 1; }
-        .partner-logos svg { width: 24px; fill: currentColor; }
+        .partner-logos img { 
+            max-height: 45px; 
+            width: auto; 
+            object-fit: contain; 
+            opacity: 0.85; 
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            filter: brightness(0) invert(1); 
+        }
+        .partner-logos img:hover { 
+            opacity: 1; 
+            transform: scale(1.05); 
+        }
 
         /* Benefits - Sezione Attività PCTO */
         .l-benefits {
@@ -620,8 +629,8 @@
             .ft-1 { bottom: 12%; right: -15%; }
             .ft-2 { bottom: -12%; left: 20%; }
 
-            .partner-logos { justify-content: center; gap: 15px; flex-direction: row;}
-            .partner-logos span { font-size: 1rem; }
+            .partner-logos { justify-content: center; gap: 25px; flex-direction: row;}
+            .partner-logos img { max-height: 35px; }
             
             .l-benefits { flex-direction: column; gap: 40px; padding: 60px 5%; }
             .l-ben-text { text-align: left; } 
@@ -716,11 +725,11 @@
 
         <section class="l-partners reveal">
             <div class="partner-logos">
-                <span><svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z"/></svg> Github</span>
-                <span><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-5.5l6-4.5-6-4.5v9z"/></svg> Coursera</span>
-                <span><svg viewBox="0 0 24 24"><path d="M2 3H11V11.5H2V3M13 3H22V11.5H13V3M2 12.5H11V21H2V12.5M13 12.5H22V21H13V12.5Z"/></svg> Microsoft</span>
-                <span><svg viewBox="0 0 24 24"><path d="M12,12A2,2 0 0,0 10,10A2,2 0 0,0 8,12A2,2 0 0,0 10,14A2,2 0 0,0 12,12M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M16,12A2,2 0 0,0 14,10A2,2 0 0,0 12,12A2,2 0 0,0 14,14A2,2 0 0,0 16,12Z"/></svg> Cisco</span>
-                <span style="font-weight: 900;">Ministero dell'Istruzione</span>
+                <img src="https://i.ibb.co/HLySdYYc/1726897313436.png" alt="ITS Academy">
+                <img src="https://i.ibb.co/fdPVg45h/Cisco-logo-blue-2016-svg.png" alt="Cisco">
+                <img src="https://i.ibb.co/0RfDJf4N/Emblema-a-Colori-con-Scritta-English-Adagio-Orizzontale-1500x335.png" alt="Ministero dell'Istruzione">
+                <img src="https://i.ibb.co/VcDkMgJg/Universita-Di-Torino-Logo-Vector-svg-300x114.png" alt="Università di Torino">
+                <img src="https://i.ibb.co/JRPS3QyJ/HGlogo2.png" alt="HackersGen">
             </div>
         </section>
 
@@ -914,7 +923,7 @@
         
         <div class="dash-topbar">
             <div class="dash-school-info">
-                <img src="Logoministerodellistruzioneedelmerito.png" class="nav-mim-logo" alt="Ministero dell'Istruzione" onerror="this.style.display='none'">
+                <img src="https://i.ibb.co/0RfDJf4N/Emblema-a-Colori-con-Scritta-English-Adagio-Orizzontale-1500x335.png" class="nav-mim-logo" alt="Ministero dell'Istruzione" onerror="this.style.display='none'">
                 <div class="header-divider" style="width:2px; height:40px; background:var(--border-color);"></div>
                 <img src="https://i.ibb.co/Q3fhCWBy/avologo.png" class="nav-school-logo" alt="Logo Avogadro">
                 <div class="school-text">
@@ -1619,6 +1628,14 @@
                 }
             });
 
+            // Evitare l'invio nativo del form che causava il ricaricamento della pagina
+            const loginForm = document.getElementById('login-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                });
+            }
+
             // GESTIONE ACCESSO TRADIZIONALE
             const handleLogin = () => {
                 const pass = passInput.value.trim();
@@ -1653,7 +1670,14 @@
             };
 
             submitBtn.addEventListener('click', handleLogin);
-            passInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
+            
+            // Gestione della pressione del tasto Enter senza ricaricare la pagina
+            passInput.addEventListener('keypress', (e) => { 
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Blocca il refresh del browser
+                    handleLogin(); 
+                }
+            });
 
             function entraNelPortale(uName) {
                 if (!uName) uName = selectedUserValue || (selectedRole === 'studente' ? "Studente" : "Docente");
