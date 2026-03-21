@@ -188,20 +188,19 @@
             box-shadow: 0 25px 50px rgba(0,0,0,0.25); 
             transform: translateY(0) scale(1);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            color: var(--text-dark); position: relative; max-height: 95vh; overflow-y: auto;
+            color: var(--text-dark); position: relative; max-height: 95vh; overflow-y: auto; overflow-x: visible;
         }
         .modal-overlay.hidden .modal-content { transform: translateY(50px) scale(0.9); }
 
         .close-btn {
             position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 2.2rem;
             cursor: pointer; color: #9ca3af; line-height: 1; transition: color 0.2s, transform 0.2s;
-            outline: none;
+            outline: none; z-index: 200;
         }
         .close-btn:hover { color: var(--text-dark); transform: scale(1.1); }
 
         .login-title { text-align: center; font-size: 2rem; font-weight: 900; margin-bottom: 25px; }
 
-        /* Slider switch ruoli animato */
         .role-toggle { 
             position: relative; display: flex; background: #f1f5f9; border-radius: 12px; 
             padding: 5px; margin-bottom: 25px; overflow: hidden;
@@ -246,6 +245,116 @@
         }
         .login-input:focus { border-color: #0284c7; background: #fff; box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1); }
 
+        /* =================================================
+           CUSTOM SELECT DROPDOWN (ANIMATO)
+        ================================================= */
+        .custom-select {
+            position: relative;
+            width: 100%;
+        }
+        .custom-select-trigger {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 16px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            background: #f9fafb;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .custom-select-trigger span {
+            color: #94a3b8;
+            transition: color 0.3s;
+            font-family: inherit;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .custom-select-trigger.selected span {
+            color: var(--text-dark);
+        }
+        .custom-select.open .custom-select-trigger {
+            border-color: #0284c7;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+        }
+        .custom-select .arrow {
+            width: 10px;
+            height: 10px;
+            border-left: 2px solid #94a3b8;
+            border-bottom: 2px solid #94a3b8;
+            transform: translateY(-3px) rotate(-45deg);
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .custom-select.open .arrow {
+            transform: translateY(2px) rotate(135deg);
+            border-color: #0284c7;
+        }
+        .custom-options {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border: 1px solid #e5e7eb;
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 999;
+            
+            /* Animazione */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .custom-select.open .custom-options {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .custom-options::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-options::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+            margin: 5px 0;
+        }
+        .custom-options::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .custom-options::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .custom-option {
+            padding: 14px 18px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .custom-option:last-child {
+            border-bottom: none;
+        }
+        .custom-option:hover {
+            background: var(--primary-light);
+            color: var(--primary-hover);
+        }
+        .custom-option.selected {
+            background: var(--primary);
+            color: #fff;
+        }
+        /* ================================================= */
+
         .btn-submit {
             width: 100%; padding: 16px; background: var(--primary); color: white;
             border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 800;
@@ -261,7 +370,6 @@
         .fade-form { animation: fadeIn 0.4s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* DIVIDER GOOGLE */
         .divider-container {
             display: flex; align-items: center; text-align: center; margin: 25px 0 20px;
         }
@@ -276,7 +384,6 @@
         
         .google-btn-wrapper { display: flex; justify-content: center; width: 100%; margin-bottom: 10px;}
         
-        /* PULSANTE CUSTOM GOOGLE & HARZAFI ID */
         .custom-google-btn {
             width: 100%; padding: 14px 20px; background: #ffffff;
             border: 2px solid #e5e7eb; border-radius: 30px;
@@ -297,7 +404,6 @@
         #teacher-forgot-msg { display: none; text-align: center; line-height: 1.6; font-weight: 600; margin-bottom: 20px;}
         .result-box { display: none; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 15px; border-radius: 12px; text-align: center; font-weight: 800; margin-top: 15px; animation: fadeIn 0.4s;}
 
-        /* Icona mostra password */
         .toggle-password-btn {
             position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
             background: none; border: none; cursor: pointer; color: #64748b;
@@ -435,7 +541,7 @@
         .copyright-text { font-size: 1rem; color: #fff; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;}
 
         /* =================================================
-           HARZAFI ID - MODALE BOTTOM SHEET (Stile iOS NFC)
+           HARZAFI ID - MODALE BOTTOM SHEET
         ================================================= */
         .hid-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -464,7 +570,6 @@
         .hid-title { font-size: 1.7rem; font-weight: 800; color: #000; margin-bottom: 8px; letter-spacing: -0.5px;}
         .hid-subtitle { font-size: 1.05rem; font-weight: 500; color: #475569; margin-bottom: 40px; line-height: 1.4;}
 
-        /* Animazione Cerchio Telefono (Simil Screenshot) */
         .hid-anim-container { display: flex; justify-content: center; align-items: center; margin-bottom: 40px; }
         .hid-circle {
             width: 130px; height: 130px; border-radius: 50%; border: 6px solid #3b82f6; 
@@ -493,7 +598,6 @@
         }
         .hid-btn-cancel:hover { background: #dbeafe; transform: translateY(-2px); }
 
-        /* Media Queries standard vecchie */
         @media (max-width: 900px) {
             .l-nav-container { padding: 5px 0; }
             .l-nav { padding: 10px 5%; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;}
@@ -673,11 +777,21 @@
             <div id="login-view" class="fade-form">
                 <div class="login-rules-banner" id="btn-rules-banner">Regole di accesso dal 01/10/2021</div>
                 <form id="login-form">
+                    
+                    <!-- MENU A TENDINA CUSTOM USERNAME -->
                     <div class="input-group">
                         <div class="label-row">
-                            <label>Username :</label>
+                            <label>Seleziona Utente:</label>
                         </div>
-                        <input type="text" id="username-input" class="login-input" placeholder="Nome e Cognome" autocomplete="off">
+                        <div class="custom-select" id="username-select">
+                            <div class="custom-select-trigger" tabindex="0">
+                                <span id="username-display">Seleziona Utente</span>
+                                <div class="arrow"></div>
+                            </div>
+                            <div class="custom-options" id="username-options">
+                                <!-- popolato via JS in base al ruolo -->
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="input-group">
@@ -730,10 +844,21 @@
             <div id="forgot-view" class="fade-form">
                 <div id="student-forgot-form">
                     <div class="login-rules-banner" style="background:#fef2f2; border-color:#fecaca; color:#dc2626; cursor:default;">Recupero Password Classe 3°A</div>
+                    
+                    <!-- MENU A TENDINA CUSTOM COGNOME STUDENTE -->
                     <div class="input-group">
-                        <label style="font-weight:800; color:#374151; display:block; margin-bottom:8px;">Inserisci il tuo cognome:</label>
-                        <input type="text" id="cognome-input" class="login-input" placeholder="Es. ROSSI" autocomplete="off" style="text-transform: uppercase;">
+                        <label style="font-weight:800; color:#374151; display:block; margin-bottom:8px;">Seleziona il tuo nome:</label>
+                        <div class="custom-select" id="forgot-cognome-select">
+                            <div class="custom-select-trigger" tabindex="0">
+                                <span id="forgot-cognome-display">Seleziona lo studente</span>
+                                <div class="arrow"></div>
+                            </div>
+                            <div class="custom-options" id="forgot-cognome-options">
+                                <!-- popolato via JS -->
+                            </div>
+                        </div>
                     </div>
+
                     <div class="input-group">
                         <label style="font-weight:800; color:#374151; display:block; margin-bottom:8px;">Inserisci il tuo codice fiscale:</label>
                         <input type="text" id="cf-input" class="login-input" placeholder="Codice Fiscale a 16 cifre" autocomplete="off" style="text-transform: uppercase;" maxlength="16">
@@ -1097,33 +1222,141 @@
             const landingObj = document.getElementById('landing-view');
             const dashboardObj = document.getElementById('app-dashboard');
             
-            // Database Studenti aggiornato
+            // Database Studenti e Docenti estratti direttamente dal PDF allegato
             const studentsDb =[
-                { cognome: "ABBATEPAOLO", cf: "BBTLCU08T20L219L" },
-                { cognome: "ACERRA", cf: "CRRFRC09B22C665U" },
-                { cognome: "AFFAOUI", cf: "FFAWLD09L30L219A" },
-                { cognome: "BALDARI", cf: "BLDLNZ08H17L219A" },
-                { cognome: "BINTE", cf: "BNTMNR07T53Z249J" },
-                { cognome: "CAUDANA", cf: "CDNGRL09P25L219P" },
-                { cognome: "ES SAID", cf: "SSDRZN08D58L219M" },
-                { cognome: "FERRIGNO", cf: "FRRDGI09E22L219Y" },
-                { cognome: "GALLE'", cf: "GLLMTT09L15H355F" },
-                { cognome: "GIBAJA", cf: "GBJMRZ07E17L219Z" },
-                { cognome: "HARZAFI", cf: "HRZDMA09D14F335D" },
-                { cognome: "HEKAL", cf: "HKLMRA09L16L219P" },
-                { cognome: "HU", cf: "HUXMRK08R01H620E" },
-                { cognome: "IONESCU", cf: "NSCMCG08L05L219A" },
-                { cognome: "KALTHI", cf: "KLTRSI09T52L219G" },
-                { cognome: "MINOTTI", cf: "MNTMTT09H06C627M" },
-                { cognome: "PANERO", cf: "PNRMTT08B20CSS5N" },
-                { cognome: "ROSSI", cf: "RSSLMG06T02Z602O" },
-                { cognome: "SCUDELER", cf: "SCDWLM09P13C665M" },
-                { cognome: "TRUMINO", cf: "TRMSMN08R08L219Q" },
-                { cognome: "UY", cf: "YUXJFR09M19Z216W" },
-                { cognome: "YU", cf: "YUXNDR09H16L219F" }
+                { nome: "ABBATEPAOLO LUCA", cf: "BBTLCU08T20L219L" },
+                { nome: "ACERRA FEDERICO", cf: "CRRFRC09B22C665U" },
+                { nome: "AFFAOUI WALID", cf: "FFAWLD09L30L219A" },
+                { nome: "BALDARI LORENZO SIMONE", cf: "BLDLNZ08H17L219A" },
+                { nome: "BINTE RASHED MD NURE RUSIDA", cf: "BNTMNR07T53Z249J" },
+                { nome: "CAUDANA GABRIEL", cf: "CDNGRL09P25L219P" },
+                { nome: "ES SAID RAZANE", cf: "SSDRZN08D58L219M" },
+                { nome: "FERRIGNO DIEGO", cf: "FRRDGI09E22L219Y" },
+                { nome: "GALLE' MATTEO", cf: "GLLMTT09L15H355F" },
+                { nome: "GIBAJA GOMEZ MAURIZIO", cf: "GBJMRZ07E17L219Z" },
+                { nome: "HARZAFI ADAM", cf: "HRZDMA09D14F335D" },
+                { nome: "HEKAL AMR", cf: "HKLMRA09L16L219P" },
+                { nome: "HU MIRKO", cf: "HUXMRK08R01H620E" },
+                { nome: "IONESCU MARCO GABRIEL", cf: "NSCMCG08L05L219A" },
+                { nome: "KALTHI IRIS", cf: "KLTRSI09T52L219G" },
+                { nome: "MINOTTI MATTEO", cf: "MNTMTT09H06C627M" },
+                { nome: "PANERO MATTEO", cf: "PNRMTT08B20CSS5N" },
+                { nome: "ROSSI DE AZEVEDO LUIZ MIGUEL", cf: "RSSLMG06T02Z602O" },
+                { nome: "SCUDELER WILLIAM", cf: "SCDWLM09P13C665M" },
+                { nome: "TRUMINO SIMONE", cf: "TRMSMN08R08L219Q" },
+                { nome: "UY JOSEF RYAN", cf: "YUXJFR09M19Z216W" },
+                { nome: "YU ANDREA", cf: "YUXNDR09H16L219F" }
+            ];
+
+            const teachersDb =[
+                { nome: "ELENA GENETTI" }
             ];
 
             let selectedRole = 'studente'; 
+            let selectedUserValue = "";
+            let selectedForgotUser = null;
+
+            // ==========================================
+            // LOGICA MENU A TENDINA CUSTOM (DROPDOWNS)
+            // ==========================================
+            const usernameSelect = document.getElementById('username-select');
+            const forgotCognomeSelect = document.getElementById('forgot-cognome-select');
+            const errorMsg = document.getElementById('login-error');
+            const forgotError = document.getElementById('forgot-error');
+
+            function populateUserDropdown(role) {
+                const optionsContainer = document.getElementById('username-options');
+                optionsContainer.innerHTML = '';
+                
+                let list = role === 'studente' ? studentsDb : teachersDb;
+                
+                list.forEach(person => {
+                    const option = document.createElement('div');
+                    option.className = 'custom-option';
+                    option.textContent = person.nome;
+                    option.dataset.value = person.nome;
+                    
+                    option.addEventListener('click', function() {
+                        const display = document.getElementById('username-display');
+                        display.textContent = person.nome;
+                        display.parentElement.classList.add('selected');
+                        selectedUserValue = person.nome;
+                        
+                        optionsContainer.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
+                        this.classList.add('selected');
+                        
+                        usernameSelect.classList.remove('open');
+                        errorMsg.style.display = 'none';
+                    });
+                    optionsContainer.appendChild(option);
+                });
+                
+                // Resetta sempre il display in caso di cambio ruolo
+                const display = document.getElementById('username-display');
+                display.textContent = 'Seleziona Utente';
+                display.parentElement.classList.remove('selected');
+                selectedUserValue = "";
+            }
+
+            function populateForgotDropdown() {
+                const optionsContainer = document.getElementById('forgot-cognome-options');
+                optionsContainer.innerHTML = '';
+                
+                studentsDb.forEach(person => {
+                    const option = document.createElement('div');
+                    option.className = 'custom-option';
+                    option.textContent = person.nome;
+                    option.dataset.value = person.nome;
+                    
+                    option.addEventListener('click', function() {
+                        const display = document.getElementById('forgot-cognome-display');
+                        display.textContent = person.nome;
+                        display.parentElement.classList.add('selected');
+                        selectedForgotUser = person;
+                        
+                        optionsContainer.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
+                        this.classList.add('selected');
+                        
+                        forgotCognomeSelect.classList.remove('open');
+                        forgotError.style.display = 'none';
+                    });
+                    optionsContainer.appendChild(option);
+                });
+                
+                // Resetta il display
+                const display = document.getElementById('forgot-cognome-display');
+                display.textContent = 'Seleziona lo studente';
+                display.parentElement.classList.remove('selected');
+                selectedForgotUser = null;
+            }
+
+            // Inizializza i dropdown all'apertura
+            populateUserDropdown('studente');
+            populateForgotDropdown();
+
+            // Attivatori per aprire/chiudere i custom dropdown
+            usernameSelect.querySelector('.custom-select-trigger').addEventListener('click', function(e) {
+                e.stopPropagation();
+                if(forgotCognomeSelect) forgotCognomeSelect.classList.remove('open');
+                this.parentElement.classList.toggle('open');
+            });
+
+            forgotCognomeSelect.querySelector('.custom-select-trigger').addEventListener('click', function(e) {
+                e.stopPropagation();
+                if(usernameSelect) usernameSelect.classList.remove('open');
+                this.parentElement.classList.toggle('open');
+            });
+
+            // Chiusura al click fuori dai dropdown
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('#username-select')) {
+                    usernameSelect.classList.remove('open');
+                }
+                if (!e.target.closest('#forgot-cognome-select')) {
+                    forgotCognomeSelect.classList.remove('open');
+                }
+            });
+
 
             /* --- LOGICA CUSTOM PER IL LOGIN CON GOOGLE TRAMITE TOKEN CLIENT --- */
             let googleTokenClient;
@@ -1170,7 +1403,7 @@
                     } else {
                         showGoogleError("Devi accedere con l'account @studenti.itisavogadro.it");
                     }
-                } else { // docente
+                } else { 
                     if (userEmail.endsWith('@itisavogadro.it')) {
                         entraNelPortaleGoogle(userName);
                     } else {
@@ -1184,13 +1417,12 @@
                 googleErrorObj.innerText = msg;
                 googleErrorObj.style.display = 'block';
                 googleErrorObj.style.animation = 'none';
-                void googleErrorObj.offsetWidth; // Trigger reflow per riavviare animazione
+                void googleErrorObj.offsetWidth; 
                 googleErrorObj.style.animation = 'shake 0.4s';
             }
 
             function entraNelPortaleGoogle(name) {
-                document.getElementById('username-input').value = name;
-                entraNelPortale();
+                entraNelPortale(name);
             }
 
             document.getElementById('custom-google-btn').addEventListener('click', () => {
@@ -1241,14 +1473,11 @@
             const teacherForgotMsg = document.getElementById('teacher-forgot-msg');
             const btnVerifyStudent = document.getElementById('btn-verify-student');
 
-            const userInput = document.getElementById('username-input');
             const passInput = document.getElementById('password-input');
             const togglePasswordBtn = document.getElementById('toggle-password');
             const eyeIcon = document.getElementById('eye-icon');
             const eyeSlashIcon = document.getElementById('eye-slash-icon');
             const submitBtn = document.getElementById('login-submit');
-            const errorMsg = document.getElementById('login-error');
-            const forgotError = document.getElementById('forgot-error');
             const forgotResult = document.getElementById('forgot-result');
 
             // LOGICA MOSTRA/NASCONDI PASSWORD
@@ -1273,17 +1502,18 @@
                 // Sposta lo sfondo animato
                 roleSlider.style.transform = index === 0 ? 'translateX(0)' : 'translateX(100%)';
                 
+                // Ricarica la lista per il dropdown coerentemente con il ruolo
+                populateUserDropdown(selectedRole);
+
                 if(forgotView.style.display === 'block'){
                     setupForgotView();
                 }
                 
-                // Se mi trovo nelle regole chiudo la view per evitare collisioni grafiche
                 rulesView.style.display = 'none';
                 if(forgotView.style.display !== 'block') {
                     loginView.style.display = 'block';
                 }
                 
-                // Nascondo eventuali vecchi errori google
                 document.getElementById('google-login-error').style.display = 'none';
             }));
 
@@ -1323,12 +1553,31 @@
                 forgotError.style.display = 'none';
                 forgotResult.style.display = 'none';
                 document.getElementById('google-login-error').style.display = 'none';
-                userInput.value = '';
+                
+                // Resetta selezione dropdown utente standard
+                selectedUserValue = "";
+                const userDisplay = document.getElementById('username-display');
+                if(userDisplay) {
+                    userDisplay.textContent = 'Seleziona Utente';
+                    userDisplay.parentElement.classList.remove('selected');
+                    usernameSelect.classList.remove('open');
+                    document.querySelectorAll('#username-options .custom-option').forEach(opt => opt.classList.remove('selected'));
+                }
+                
+                // Resetta selezione dropdown studente password dimenticata
+                selectedForgotUser = null;
+                const forgotDisplay = document.getElementById('forgot-cognome-display');
+                if(forgotDisplay) {
+                    forgotDisplay.textContent = 'Seleziona lo studente';
+                    forgotDisplay.parentElement.classList.remove('selected');
+                    forgotCognomeSelect.classList.remove('open');
+                    document.querySelectorAll('#forgot-cognome-options .custom-option').forEach(opt => opt.classList.remove('selected'));
+                }
+
                 passInput.value = '';
                 passInput.type = 'password';
                 eyeIcon.style.display = 'block';
                 eyeSlashIcon.style.display = 'none';
-                document.getElementById('cognome-input').value = '';
                 document.getElementById('cf-input').value = '';
             }
 
@@ -1344,23 +1593,24 @@
                 }
             }
 
-            // VERIFICA STUDENTE PER PASSWORD
+            // VERIFICA STUDENTE PER RECUPERO PASSWORD
             btnVerifyStudent.addEventListener('click', () => {
-                const cogInputVal = document.getElementById('cognome-input').value.trim().toUpperCase();
                 const cfInputVal = document.getElementById('cf-input').value.trim().toUpperCase();
 
-                if(!cogInputVal || !cfInputVal) {
-                    forgotError.innerText = "Inserisci entrambi i campi.";
+                if(!selectedForgotUser || !cfInputVal) {
+                    forgotError.innerText = "Seleziona uno studente e inserisci il Codice Fiscale.";
                     forgotError.style.display = 'block';
                     forgotResult.style.display = 'none';
                     return;
                 }
 
-                const studentMatch = studentsDb.find(s => s.cognome === cogInputVal && s.cf === cfInputVal);
-
-                if(studentMatch) {
+                if(selectedForgotUser.cf === cfInputVal) {
                     forgotError.style.display = 'none';
-                    forgotResult.innerHTML = `Verifica superata, Ciao ${studentMatch.cognome}.<br>La password di classe è:<br><span style="color:#059669; font-size:1.2rem; display:block; margin-top:5px; user-select:all;">STUDENTIAVOGADRO2009</span>`;
+                    // Suddividi il nome solo per dare il benvenuto cordiale
+                    let cordialName = selectedForgotUser.nome.split(' ')[0];
+                    cordialName = cordialName.charAt(0).toUpperCase() + cordialName.slice(1).toLowerCase();
+
+                    forgotResult.innerHTML = `Verifica superata, Ciao ${cordialName}.<br>La password di classe è:<br><span style="color:#059669; font-size:1.2rem; display:block; margin-top:5px; user-select:all;">STUDENTIAVOGADRO2009</span>`;
                     forgotResult.style.display = 'block';
                 } else {
                     forgotResult.style.display = 'none';
@@ -1372,17 +1622,29 @@
             // GESTIONE ACCESSO TRADIZIONALE
             const handleLogin = () => {
                 const pass = passInput.value.trim();
+                const uName = selectedUserValue;
                 
+                if (!uName) {
+                    errorMsg.innerText = "Seleziona prima un utente dalla lista.";
+                    errorMsg.style.display = 'block';
+                    errorMsg.style.animation = 'none';
+                    void errorMsg.offsetWidth; 
+                    errorMsg.style.animation = 'shake 0.4s';
+                    return;
+                }
+                
+                errorMsg.innerText = "Credenziali errate. Riprova."; // Resetta eventuale errore
+
                 if (
                     (selectedRole === 'studente' && pass === 'STUDENTIAVOGADRO2009') || 
                     (selectedRole === 'docente' && pass === '26DOCENTIAVO') || 
                     pass === 'admin'
                 ) {
-                    entraNelPortale();
+                    entraNelPortale(uName);
                 } else {
                     errorMsg.style.display = 'block';
                     errorMsg.style.animation = 'none';
-                    void errorMsg.offsetWidth; // Trigger reflow per riavviare animazione
+                    void errorMsg.offsetWidth; 
                     errorMsg.style.animation = 'shake 0.4s';
                     
                     passInput.style.borderColor = '#ef4444';
@@ -1393,10 +1655,10 @@
             submitBtn.addEventListener('click', handleLogin);
             passInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
 
-            function entraNelPortale() {
-                let uName = userInput.value.trim();
-                if (!uName) uName = selectedRole === 'studente' ? "Studente" : "Docente";
+            function entraNelPortale(uName) {
+                if (!uName) uName = selectedUserValue || (selectedRole === 'studente' ? "Studente" : "Docente");
                 
+                // Formatta in "Nome Cognome" per eleganza
                 const formattedName = uName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
                 
                 document.getElementById('user-greeting-title').innerText = `Buongiorno, ${formattedName}.`;
@@ -1526,15 +1788,12 @@
                 const valoreInserito = hidInput.value.trim();
                 
                 if (valoreInserito === HID_VALIDO) {
-                    // Successo! 
                     chiudiModaleHID(); 
-                    document.getElementById('username-input').value = "Utente HID"; 
-                    entraNelPortale(); // QUESTA è la funzione che avvia la dashboard
+                    entraNelPortale("Utente HID"); 
                 } else {
-                    // Errore
                     hidError.style.display = 'block';
                     hidError.style.animation = 'none';
-                    void hidError.offsetWidth; // Reflow
+                    void hidError.offsetWidth; 
                     hidError.style.animation = 'shake 0.4s';
                 }
             });
