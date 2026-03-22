@@ -249,18 +249,18 @@
 
         .login-input {
             width: 100%; padding: 16px 18px; border: 2px solid #e5e7eb;
-            border-radius: 14px; font-size: 1.05rem; outline: none; transition: all 0.3s;
-            font-family: inherit; font-weight: 600; color: var(--text-dark); background: #f9fafb;
+            border-radius: 14px; font-size: 1.05rem; outline: none; transition: border-color 0.3s, box-shadow 0.3s;
+            font-weight: 600; color: var(--text-dark); background: #f9fafb;
         }
         .login-input:focus { border-color: #0284c7; background: #fff; box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1); }
+        .login-input:disabled { background: #f1f5f9; cursor: not-allowed; color: #94a3b8; }
 
-        /* FIX ALLINEAMENTO PUNTINI PASSWORD DISPOSITIVI MOBILI */
-        input[type="password"].login-input {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        /* FONT SICURO E STABILE PER LA PASSWORD (Evita salti visivi ed equipara i pallini PC/Mobile) */
+        #password-input {
+            font-family: Verdana, Arial, Helvetica, sans-serif !important;
             letter-spacing: 2px;
         }
-        /* RIPRISTINO DEL TEMA PER IL PLACEHOLDER */
-        input[type="password"].login-input::placeholder {
+        #password-input::placeholder {
             font-family: 'Inter', sans-serif !important;
             letter-spacing: normal;
         }
@@ -383,8 +383,11 @@
         }
         .btn-submit:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(2, 132, 199, 0.3); }
         .btn-submit:active { transform: translateY(0); box-shadow: 0 4px 10px rgba(2, 132, 199, 0.2); }
+        .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; transform: translateY(0); box-shadow: none; }
 
         .error-msg { color: #ef4444; font-size: 0.9rem; margin-top: 8px; display: none; font-weight: 700; text-align: center; animation: shake 0.4s; }
+        .attempts-msg { color: #d97706; font-size: 0.85rem; margin-top: 5px; display: none; font-weight: 800; text-align: center; }
+        
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
 
         .fade-form { animation: fadeIn 0.4s ease forwards; }
@@ -782,6 +785,9 @@
         </section>
     </div>
 
+    <!-- IFRAME FANTASMA PER FAR SALVARE LA PASSWORD AL BROWSER -->
+    <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+
     <!-- ======================================================= -->
     <!-- MODALE LOGIN E RECUPERO PASSWORD                        -->
     <!-- ======================================================= -->
@@ -796,17 +802,22 @@
                 <button class="role-btn" data-role="docente">Docente</button>
             </div>
 
-            <!-- FORM DI LOGIN -->
+            <!-- FORM DI LOGIN (Collegato a iframe fantasma per Password Manager di sistema) -->
             <div id="login-view" class="fade-form">
                 <div class="login-rules-banner" id="btn-rules-banner">Regole di accesso dal 01/10/2021</div>
-                <form id="login-form">
+                
+                <form id="login-form" target="dummyframe" action="about:blank" method="POST">
                     
-                    <!-- MENU A TENDINA CUSTOM USERNAME -->
+                    <!-- MENU A TENDINA CUSTOM USERNAME + CAMPO NASCOSTO PER AUTOFILL -->
                     <div class="input-group">
                         <div class="label-row">
                             <label>Seleziona Utente:</label>
                         </div>
                         <div class="custom-select" id="username-select">
+                            <!-- Campo vitale invisibile che Google riempirà (o prenderà dal clic) -->
+                            <input type="text" id="hidden-username" name="username" autocomplete="username" 
+                                   style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;" tabindex="-1">
+                                   
                             <div class="custom-select-trigger" tabindex="0">
                                 <span id="username-display">Seleziona Utente</span>
                                 <div class="arrow"></div>
@@ -823,16 +834,17 @@
                             <a class="forgot-link" id="btn-forgot-pass">Password dimenticata?</a>
                         </div>
                         <div style="position: relative;">
-                            <input type="password" id="password-input" class="login-input" placeholder="Inserisci la password" autocomplete="off" style="padding-right: 50px;">
-                            <button type="button" id="toggle-password" class="toggle-password-btn" aria-label="Mostra/Nascondi password">
+                            <input type="password" id="password-input" name="password" autocomplete="current-password" class="login-input" placeholder="Inserisci la password" style="padding-right: 50px;">
+                            <button type="button" id="toggle-password" class="toggle-password-btn" aria-label="Mostra/Nascondi password" tabindex="-1">
                                 <svg id="eye-icon" viewBox="0 0 24 24" style="width: 22px; fill: currentColor;"><path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/></svg>
                                 <svg id="eye-slash-icon" viewBox="0 0 24 24" style="width: 22px; fill: currentColor; display: none;"><path d="M11.83,9L15,12.16C15,12.11 15,12.05 15,12A3,3 0 0,0 12,9C11.94,9 11.89,9 11.83,9M7.53,9.8L9.08,11.35C9.03,11.56 9,11.77 9,12A3,3 0 0,0 12,15C12.22,15 12.44,14.97 12.65,14.92L14.2,16.47C13.53,16.8 12.79,17 12,17A5,5 0 0,1 7,12C7,11.21 7.2,10.47 7.53,9.8M2,4.27L4.28,6.55L4.73,7C3.08,8.3 1.78,10 1,12C2.73,16.39 7,19.5 12,19.5C13.55,19.5 15.03,19.2 16.38,18.66L16.81,19.08L19.73,22L21,20.73L3.27,3M12,7A5,5 0 0,1 17,12C17,12.64 16.87,13.26 16.64,13.82L19.57,16.75C21.07,15.5 22.27,13.86 23,12C21.27,7.61 17,4.5 12,4.5C10.6,4.5 9.26,4.75 8,5.2L10.17,7.35C10.74,7.13 11.35,7 12,7Z"/></svg>
                             </button>
                         </div>
                         <div class="error-msg" id="login-error">Credenziali errate. Riprova.</div>
+                        <div class="attempts-msg" id="login-attempts">Ti rimangono 3 tentativi.</div>
                     </div>
                     
-                    <button type="button" id="login-submit" class="btn-submit">ENTRA</button>
+                    <button type="submit" id="login-submit" class="btn-submit">ENTRA</button>
                     
                     <!-- ACCESSO TRAMITE GOOGLE -->
                     <div class="divider-container">
@@ -1240,12 +1252,16 @@
     </div>
 
     <script>
+        // MISURA DI SICUREZZA: Messaggio Console Anti-Self-XSS
+        console.log("%cFERMATI!", "color: red; font-size: 50px; font-weight: bold; text-shadow: 2px 2px 0 #000;");
+        console.log("%cQuesta è una funzionalità del browser pensata per gli sviluppatori. Se qualcuno ti ha detto di copiare e incollare qualcosa qui per sbloccare una funzione o hackerare l'account, si tratta di una truffa.", "font-size: 16px; font-weight: bold;");
+
         document.addEventListener('DOMContentLoaded', () => {
             const finalValue = 111.30;
             const landingObj = document.getElementById('landing-view');
             const dashboardObj = document.getElementById('app-dashboard');
             
-            // Database Studenti e Docenti estratti direttamente dal PDF allegato
+            // Database Studenti e Docenti
             const studentsDb =[
                 { nome: "ABBATEPAOLO LUCA", cf: "BBTLCU08T20L219L" },
                 { nome: "ACERRA FEDERICO", cf: "CRRFRC09B22C665U" },
@@ -1280,11 +1296,80 @@
             let selectedForgotUser = null;
 
             // ==========================================
-            // LOGICA MENU A TENDINA CUSTOM (DROPDOWNS)
+            // LOGICA SISTEMA ANTI-BRUTEFORCE (TIMER)
+            // ==========================================
+            const MAX_ATTEMPTS = 3;
+            const LOCKOUT_DURATION = 60000; // 60 secondi
+            let lockoutTimerInterval;
+
+            const attemptsMsgObj = document.getElementById('login-attempts');
+            const passInput = document.getElementById('password-input');
+            const submitBtn = document.getElementById('login-submit');
+            const errorMsg = document.getElementById('login-error');
+
+            function checkLockoutState() {
+                const lockoutUntil = localStorage.getItem('pcto_lockout_until');
+                if (lockoutUntil) {
+                    const now = Date.now();
+                    if (now < parseInt(lockoutUntil)) {
+                        startLockoutCountdown(parseInt(lockoutUntil));
+                        return true;
+                    } else {
+                        // Il tempo è scaduto, sblocchiamo
+                        localStorage.removeItem('pcto_lockout_until');
+                        localStorage.removeItem('pcto_failed_attempts');
+                        resetLockoutUI();
+                    }
+                }
+                return false;
+            }
+
+            function startLockoutCountdown(endTime) {
+                submitBtn.disabled = true;
+                passInput.disabled = true; 
+                errorMsg.style.display = 'none';
+                
+                attemptsMsgObj.style.display = 'block';
+                attemptsMsgObj.style.color = '#dc2626'; // Colore rosso per il blocco
+                
+                clearInterval(lockoutTimerInterval);
+                
+                const updateTimer = () => {
+                    const now = Date.now();
+                    const remainingMs = endTime - now;
+                    
+                    if (remainingMs <= 0) {
+                        clearInterval(lockoutTimerInterval);
+                        localStorage.removeItem('pcto_lockout_until');
+                        localStorage.removeItem('pcto_failed_attempts');
+                        resetLockoutUI();
+                    } else {
+                        const remainingSec = Math.ceil(remainingMs / 1000);
+                        const formattedSec = remainingSec < 10 ? '0' + remainingSec : remainingSec;
+                        attemptsMsgObj.innerText = `Accesso bloccato per sicurezza. Riprova tra 00:${formattedSec}`;
+                        submitBtn.innerText = `BLOCCATO (00:${formattedSec})`;
+                    }
+                };
+                
+                updateTimer();
+                lockoutTimerInterval = setInterval(updateTimer, 1000);
+            }
+
+            function resetLockoutUI() {
+                submitBtn.disabled = false;
+                passInput.disabled = false;
+                submitBtn.innerText = 'ENTRA';
+                attemptsMsgObj.style.display = 'none';
+                attemptsMsgObj.style.color = '#d97706'; // Ripristina Giallo per i tentativi futuri
+            }
+
+
+            // ==========================================
+            // LOGICA MENU A TENDINA CUSTOM E AUTOFILL
             // ==========================================
             const usernameSelect = document.getElementById('username-select');
+            const hiddenUsernameInput = document.getElementById('hidden-username');
             const forgotCognomeSelect = document.getElementById('forgot-cognome-select');
-            const errorMsg = document.getElementById('login-error');
             const forgotError = document.getElementById('forgot-error');
 
             function populateUserDropdown(role) {
@@ -1300,10 +1385,10 @@
                     option.dataset.value = person.nome;
                     
                     option.addEventListener('click', function() {
-                        const display = document.getElementById('username-display');
-                        display.textContent = person.nome;
-                        display.parentElement.classList.add('selected');
+                        // Sincronizza selezione con il campo invisibile form
                         selectedUserValue = person.nome;
+                        hiddenUsernameInput.value = person.nome;
+                        hiddenUsernameInput.dispatchEvent(new Event('input', { bubbles: true }));
                         
                         optionsContainer.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
                         this.classList.add('selected');
@@ -1314,11 +1399,12 @@
                     optionsContainer.appendChild(option);
                 });
                 
-                // Resetta sempre il display in caso di cambio ruolo
+                // Resetta
                 const display = document.getElementById('username-display');
                 display.textContent = 'Seleziona Utente';
                 display.parentElement.classList.remove('selected');
                 selectedUserValue = "";
+                hiddenUsernameInput.value = "";
             }
 
             function populateForgotDropdown() {
@@ -1346,38 +1432,45 @@
                     optionsContainer.appendChild(option);
                 });
                 
-                // Resetta il display
+                // Resetta
                 const display = document.getElementById('forgot-cognome-display');
                 display.textContent = 'Seleziona lo studente';
                 display.parentElement.classList.remove('selected');
                 selectedForgotUser = null;
             }
 
-            // Inizializza i dropdown all'apertura
             populateUserDropdown('studente');
             populateForgotDropdown();
 
-            // Attivatori per aprire/chiudere i custom dropdown
+            // Seleziona Utente - intercetta la selezione automatica del browser
+            const updateDropdownFromAutofill = () => {
+                const val = hiddenUsernameInput.value.toUpperCase();
+                if (val && val !== selectedUserValue) {
+                    selectedUserValue = val;
+                    const display = document.getElementById('username-display');
+                    display.textContent = val;
+                    display.parentElement.classList.add('selected');
+                }
+            };
+            hiddenUsernameInput.addEventListener('input', updateDropdownFromAutofill);
+            hiddenUsernameInput.addEventListener('change', updateDropdownFromAutofill);
+            // Polling leggero quando focalizziamo la password (Google Autofill lo esegue spesso in modo silenzioso)
+            passInput.addEventListener('focus', () => setTimeout(updateDropdownFromAutofill, 500));
+
+            // Menu UI apriti/chiudi
             usernameSelect.querySelector('.custom-select-trigger').addEventListener('click', function(e) {
                 e.stopPropagation();
                 if(forgotCognomeSelect) forgotCognomeSelect.classList.remove('open');
                 this.parentElement.classList.toggle('open');
             });
-
             forgotCognomeSelect.querySelector('.custom-select-trigger').addEventListener('click', function(e) {
                 e.stopPropagation();
                 if(usernameSelect) usernameSelect.classList.remove('open');
                 this.parentElement.classList.toggle('open');
             });
-
-            // Chiusura al click fuori dai dropdown
             document.addEventListener('click', function(e) {
-                if (!e.target.closest('#username-select')) {
-                    usernameSelect.classList.remove('open');
-                }
-                if (!e.target.closest('#forgot-cognome-select')) {
-                    forgotCognomeSelect.classList.remove('open');
-                }
+                if (!e.target.closest('#username-select')) usernameSelect.classList.remove('open');
+                if (!e.target.closest('#forgot-cognome-select')) forgotCognomeSelect.classList.remove('open');
             });
 
 
@@ -1459,7 +1552,7 @@
             initGoogleAuth();
             /* ------------------------------------------- */
 
-            // Animazioni allo scroll (Scroll Reveal)
+            // Animazioni allo scroll
             const reveals = document.querySelectorAll('.reveal');
             const revealOnScroll = () => {
                 const windowHeight = window.innerHeight;
@@ -1495,13 +1588,15 @@
             const studentForgotForm = document.getElementById('student-forgot-form');
             const teacherForgotMsg = document.getElementById('teacher-forgot-msg');
             const btnVerifyStudent = document.getElementById('btn-verify-student');
-
-            const passInput = document.getElementById('password-input');
+            
             const togglePasswordBtn = document.getElementById('toggle-password');
             const eyeIcon = document.getElementById('eye-icon');
             const eyeSlashIcon = document.getElementById('eye-slash-icon');
-            const submitBtn = document.getElementById('login-submit');
             const forgotResult = document.getElementById('forgot-result');
+
+            // EXTRA SECURITY: Blocco Copia Incolla per la casella Password
+            passInput.addEventListener('copy', e => e.preventDefault());
+            passInput.addEventListener('paste', e => e.preventDefault());
 
             // LOGICA MOSTRA/NASCONDI PASSWORD
             togglePasswordBtn.addEventListener('click', () => {
@@ -1522,10 +1617,7 @@
                 e.target.classList.add('active');
                 selectedRole = e.target.dataset.role;
                 
-                // Sposta lo sfondo animato
                 roleSlider.style.transform = index === 0 ? 'translateX(0)' : 'translateX(100%)';
-                
-                // Ricarica la lista per il dropdown coerentemente con il ruolo
                 populateUserDropdown(selectedRole);
 
                 if(forgotView.style.display === 'block'){
@@ -1543,6 +1635,7 @@
             openLoginBtns.forEach(btn => btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 loginModal.classList.remove('hidden');
+                checkLockoutState(); // Controllo Blocco pendente
                 resetModal();
             }));
 
@@ -1550,20 +1643,17 @@
                 loginModal.classList.add('hidden');
             });
 
-            // Apertura Modale Regole di Accesso
             btnRulesBanner.addEventListener('click', () => {
                 loginView.style.display = 'none';
                 rulesView.style.display = 'block';
             });
 
-            // Apertura recupero password
             btnForgot.addEventListener('click', () => {
                 loginView.style.display = 'none';
                 forgotView.style.display = 'block';
                 setupForgotView();
             });
 
-            // Ritorna al Login dalle varie schermate
             btnsBackLogin.forEach(btn => btn.addEventListener('click', () => {
                 resetModal();
             }));
@@ -1572,13 +1662,19 @@
                 loginView.style.display = 'block';
                 forgotView.style.display = 'none';
                 rulesView.style.display = 'none';
-                errorMsg.style.display = 'none';
+                
+                // Pulisci solo se non in stato di blocco
+                if (!localStorage.getItem('pcto_lockout_until')) {
+                    errorMsg.style.display = 'none';
+                    attemptsMsgObj.style.display = 'none';
+                }
+                
                 forgotError.style.display = 'none';
                 forgotResult.style.display = 'none';
                 document.getElementById('google-login-error').style.display = 'none';
                 
-                // Resetta selezione dropdown utente standard
                 selectedUserValue = "";
+                hiddenUsernameInput.value = "";
                 const userDisplay = document.getElementById('username-display');
                 if(userDisplay) {
                     userDisplay.textContent = 'Seleziona Utente';
@@ -1587,7 +1683,6 @@
                     document.querySelectorAll('#username-options .custom-option').forEach(opt => opt.classList.remove('selected'));
                 }
                 
-                // Resetta selezione dropdown studente password dimenticata
                 selectedForgotUser = null;
                 const forgotDisplay = document.getElementById('forgot-cognome-display');
                 if(forgotDisplay) {
@@ -1616,7 +1711,7 @@
                 }
             }
 
-            // VERIFICA STUDENTE PER RECUPERO PASSWORD
+            // RECUPERO PASSWORD
             btnVerifyStudent.addEventListener('click', () => {
                 const cfInputVal = document.getElementById('cf-input').value.trim().toUpperCase();
 
@@ -1629,7 +1724,6 @@
 
                 if(selectedForgotUser.cf === cfInputVal) {
                     forgotError.style.display = 'none';
-                    // Suddividi il nome solo per dare il benvenuto cordiale
                     let cordialName = selectedForgotUser.nome.split(' ')[0];
                     cordialName = cordialName.charAt(0).toUpperCase() + cordialName.slice(1).toLowerCase();
 
@@ -1642,20 +1736,24 @@
                 }
             });
 
-            // Evitare l'invio nativo del form che causava il ricaricamento della pagina
-            const loginForm = document.getElementById('login-form');
-            if (loginForm) {
-                loginForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                });
-            }
 
-            // GESTIONE ACCESSO TRADIZIONALE
-            const handleLogin = () => {
+            // ==========================================
+            // SUBMIT FORM (Compatibile con Autofill Browser)
+            // ==========================================
+            const loginForm = document.getElementById('login-form');
+            loginForm.addEventListener('submit', (e) => {
+                
+                if (checkLockoutState()) {
+                    e.preventDefault();
+                    return;
+                }
+                
                 const pass = passInput.value.trim();
-                const uName = selectedUserValue;
+                // Acquisizione sicura da campo hidden (sincronizzato da click o autofill)
+                const uName = hiddenUsernameInput.value.trim();
                 
                 if (!uName) {
+                    e.preventDefault(); // Stop Submit
                     errorMsg.innerText = "Seleziona prima un utente dalla lista.";
                     errorMsg.style.display = 'block';
                     errorMsg.style.animation = 'none';
@@ -1663,40 +1761,66 @@
                     errorMsg.style.animation = 'shake 0.4s';
                     return;
                 }
-                
-                errorMsg.innerText = "Credenziali errate. Riprova."; // Resetta eventuale errore
 
+                // Cifratura in Base64 (Offuscamento standard da ispeziona elemento)
+                const isStudentPass = btoa(pass) === 'U1RVREVOVElBVk9HQURSTzIwMDk=';
+                const isTeacherPass = btoa(pass) === 'MjZET0NFTlRJQVZP';
+                const isAdminPass   = btoa(pass) === 'YWRtaW4=';
+                
                 if (
-                    (selectedRole === 'studente' && pass === 'STUDENTIAVOGADRO2009') || 
-                    (selectedRole === 'docente' && pass === '26DOCENTIAVO') || 
-                    pass === 'admin'
+                    (selectedRole === 'studente' && isStudentPass) || 
+                    (selectedRole === 'docente' && isTeacherPass) || 
+                    isAdminPass
                 ) {
+                    // LOGIN EFFETTUATO CON SUCCESSO
+                    // Lasciamo scorrere il Submit sul form "dummyframe" nascosto.
+                    // IL BROWSER NOTERA IL SUCCESSO E CHIEDERA DI SALVARE LA PASSWORD.
+                    
+                    localStorage.removeItem('pcto_failed_attempts');
+                    localStorage.removeItem('pcto_lockout_until');
+                    
                     entraNelPortale(uName);
                 } else {
-                    errorMsg.style.display = 'block';
-                    errorMsg.style.animation = 'none';
-                    void errorMsg.offsetWidth; 
-                    errorMsg.style.animation = 'shake 0.4s';
+                    // PASSWORD ERRATA
+                    e.preventDefault(); // Stop Submit (Non farla salvare a Google)
                     
-                    passInput.style.borderColor = '#ef4444';
-                    setTimeout(() => passInput.style.borderColor = '#e5e7eb', 1500);
-                }
-            };
-
-            submitBtn.addEventListener('click', handleLogin);
-            
-            // Gestione della pressione del tasto Enter senza ricaricare la pagina
-            passInput.addEventListener('keypress', (e) => { 
-                if (e.key === 'Enter') {
-                    e.preventDefault(); // Blocca il refresh del browser
-                    handleLogin(); 
+                    passInput.value = ''; // Svuota subito la casella
+                    
+                    let attempts = parseInt(localStorage.getItem('pcto_failed_attempts') || '0');
+                    attempts++;
+                    localStorage.setItem('pcto_failed_attempts', attempts);
+                    
+                    if (attempts >= MAX_ATTEMPTS) {
+                        // BLOCCA SISTEMA
+                        const lockoutUntil = Date.now() + LOCKOUT_DURATION;
+                        localStorage.setItem('pcto_lockout_until', lockoutUntil);
+                        startLockoutCountdown(lockoutUntil);
+                    } else {
+                        // SEGNALA ERRORE E TENTATIVI RESIDUI
+                        const rem = MAX_ATTEMPTS - attempts;
+                        errorMsg.innerText = "Credenziali errate. Riprova.";
+                        errorMsg.style.display = 'block';
+                        
+                        attemptsMsgObj.innerText = rem === 1 ? 'Ti rimane 1 ultimo tentativo.' : `Ti rimangono ${rem} tentativi.`;
+                        attemptsMsgObj.style.display = 'block';
+                        
+                        errorMsg.style.animation = 'none';
+                        void errorMsg.offsetWidth; 
+                        errorMsg.style.animation = 'shake 0.4s';
+                        
+                        passInput.style.borderColor = '#ef4444';
+                        setTimeout(() => passInput.style.borderColor = '#e5e7eb', 1500);
+                    }
                 }
             });
+
+            // Avvio del timer al caricamento
+            checkLockoutState();
 
             function entraNelPortale(uName) {
                 if (!uName) uName = selectedUserValue || (selectedRole === 'studente' ? "Studente" : "Docente");
                 
-                // Formatta in "Nome Cognome" per eleganza
+                // Formatta il nome
                 const formattedName = uName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
                 
                 document.getElementById('user-greeting-title').innerText = `Buongiorno, ${formattedName}.`;
@@ -1715,7 +1839,7 @@
                          document.querySelectorAll('.stat-segment').forEach(el=> el.style.transform='scaleX(1)');
                     }, 100); 
 
-                    // Inizializza Contatore Ore
+                    // Contatore Ore
                     let counterObj = document.getElementById('hour-counter');
                     let cvValue = 0;
                     const cDuration = 1800; 
@@ -1733,7 +1857,7 @@
                 }, 500);
             }
 
-            // GESTIONE PULSANTE ESCI
+            // PULSANTE ESCI
             document.getElementById('btn-logout-dash').addEventListener('click', () => {
                 dashboardObj.style.opacity = '0';
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1750,7 +1874,7 @@
                 }, 500);
             });
 
-            // GESTIONE ESPANSIONE ATTIVITA' TIMELINE
+            // ESPANSIONE ATTIVITA'
             document.querySelectorAll('.timeline-item').forEach(currElMap => {
                 currElMap.addEventListener('click', function() {
                     const isOpen = this.getAttribute('aria-expanded') === 'true';
@@ -1758,7 +1882,7 @@
                 });
             });
             
-            // Link della nav fluidi per mobile
+            // Link fluidi
             document.querySelectorAll('.l-nav-links a').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -1799,14 +1923,10 @@
                 hidModal.classList.add('hidden');
             }
 
-            // Apri popup dal form login
             btnHarzafiId.addEventListener('click', apriModaleHID);
-
-            // Chiudi popup con "X" o "Annullare"
             hidCloseBtn.addEventListener('click', chiudiModaleHID);
             hidCancelBtn.addEventListener('click', chiudiModaleHID);
 
-            // Passa a inserimento manuale
             hidOpenManual.addEventListener('click', (e) => {
                 e.preventDefault();
                 hidScanView.style.display = 'none';
@@ -1814,14 +1934,12 @@
                 hidInput.focus();
             });
 
-            // Torna indietro alla schermata di scansione
             hidBackBtn.addEventListener('click', () => {
                 hidManualView.style.display = 'none';
                 hidScanView.style.display = 'block';
                 hidError.style.display = 'none';
             });
 
-            // Verifica dell'HID inserito manualmente
             hidSubmitBtn.addEventListener('click', () => {
                 const valoreInserito = hidInput.value.trim();
                 
