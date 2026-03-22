@@ -1385,10 +1385,14 @@
                     option.dataset.value = person.nome;
                     
                     option.addEventListener('click', function() {
+                        // Sincronizza l'UI visibile in tempo reale (Risolto il Bug grave)
+                        const display = document.getElementById('username-display');
+                        display.textContent = person.nome;
+                        display.parentElement.classList.add('selected');
+                        
                         // Sincronizza selezione con il campo invisibile form
                         selectedUserValue = person.nome;
                         hiddenUsernameInput.value = person.nome;
-                        hiddenUsernameInput.dispatchEvent(new Event('input', { bubbles: true }));
                         
                         optionsContainer.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
                         this.classList.add('selected');
@@ -1442,22 +1446,24 @@
             populateUserDropdown('studente');
             populateForgotDropdown();
 
-            // Seleziona Utente - intercetta la selezione automatica del browser
+            // Intercetta l'autofill silenzioso del browser (Google Password Manager)
             const updateDropdownFromAutofill = () => {
                 const val = hiddenUsernameInput.value.toUpperCase();
                 if (val && val !== selectedUserValue) {
                     selectedUserValue = val;
                     const display = document.getElementById('username-display');
-                    display.textContent = val;
-                    display.parentElement.classList.add('selected');
+                    if(display) {
+                        display.textContent = val;
+                        display.parentElement.classList.add('selected');
+                    }
                 }
             };
             hiddenUsernameInput.addEventListener('input', updateDropdownFromAutofill);
             hiddenUsernameInput.addEventListener('change', updateDropdownFromAutofill);
-            // Polling leggero quando focalizziamo la password (Google Autofill lo esegue spesso in modo silenzioso)
-            passInput.addEventListener('focus', () => setTimeout(updateDropdownFromAutofill, 500));
+            // Forza il controllo se l'utente clicca sulla password
+            passInput.addEventListener('focus', () => setTimeout(updateDropdownFromAutofill, 300));
 
-            // Menu UI apriti/chiudi
+            // Apri e Chiudi menu custom
             usernameSelect.querySelector('.custom-select-trigger').addEventListener('click', function(e) {
                 e.stopPropagation();
                 if(forgotCognomeSelect) forgotCognomeSelect.classList.remove('open');
@@ -1598,13 +1604,19 @@
             passInput.addEventListener('copy', e => e.preventDefault());
             passInput.addEventListener('paste', e => e.preventDefault());
 
-            // LOGICA MOSTRA/NASCONDI PASSWORD
+            // LOGICA MOSTRA/NASCONDI PASSWORD (Fix Salti Inaspettati)
             togglePasswordBtn.addEventListener('click', () => {
                 if (passInput.type === 'password') {
+                    // Toglie lo stile font password temporaneamente
+                    passInput.style.fontFamily = "'Inter', sans-serif";
+                    passInput.style.letterSpacing = "normal";
                     passInput.type = 'text';
                     eyeIcon.style.display = 'none';
                     eyeSlashIcon.style.display = 'block';
                 } else {
+                    // Ripristina lo stile password e i pallini grandi di Verdana
+                    passInput.style.fontFamily = "Verdana, Arial, Helvetica, sans-serif";
+                    passInput.style.letterSpacing = "2px";
                     passInput.type = 'password';
                     eyeIcon.style.display = 'block';
                     eyeSlashIcon.style.display = 'none';
@@ -1694,6 +1706,8 @@
 
                 passInput.value = '';
                 passInput.type = 'password';
+                passInput.style.fontFamily = "Verdana, Arial, Helvetica, sans-serif";
+                passInput.style.letterSpacing = "2px";
                 eyeIcon.style.display = 'block';
                 eyeSlashIcon.style.display = 'none';
                 document.getElementById('cf-input').value = '';
