@@ -251,9 +251,17 @@
         }
 
         .login-rules-banner {
-            background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd;
-            padding: 12px; text-align: center; border-radius: 12px;
-            font-weight: 700; font-size: 0.95rem; margin-bottom: 25px;
+        background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd;
+        padding: 12px 5px; /* Ridotto il padding laterale per dare più spazio al testo */
+        text-align: center; border-radius: 12px;
+        font-weight: 700; 
+        margin-bottom: 25px;
+        
+        /* MODIFICHE PER LA RIGA SINGOLA */
+        font-size: clamp(0.7rem, 3.5vw, 0.95rem); /* Rimpicciolisce il testo dinamicamente se lo schermo è stretto */
+        white-space: nowrap; /* Forza il testo a non andare mai a capo */
+        overflow: hidden; /* Evita che il testo "esca" dal bottone... */
+        text-overflow: ellipsis; /* ...e mette i puntini (...) su schermi minuscoli sotto i 300px */
         }
 
         #btn-rules-banner {
@@ -831,7 +839,7 @@
 
             <!-- FORM DI LOGIN (Collegato a iframe fantasma per Password Manager di sistema) -->
             <div id="login-view" class="fade-form">
-                <div class="login-rules-banner" id="btn-rules-banner">Leggi le regole di accesso dal 01/10/2021</div>
+                <div class="login-rules-banner" id="btn-rules-banner"><u>Leggi le regole di accesso dal 01/10/2021</u></div>
                 
                 <form id="login-form" target="dummyframe" action="about:blank" method="POST">
                     
