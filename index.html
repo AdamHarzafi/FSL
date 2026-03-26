@@ -1570,8 +1570,23 @@
             const eyeSlashIcon = document.getElementById('eye-slash-icon');
             const forgotResult = document.getElementById('forgot-result');
 
-            passInput.addEventListener('copy', e => e.preventDefault());
-            passInput.addEventListener('paste', e => e.preventDefault());
+            passInput.addEventListener('copy', e => {
+                e.preventDefault();
+                errorMsg.innerText = "Per motivi di sicurezza, non è possibile copiare la password.";
+                errorMsg.style.display = 'block';
+                errorMsg.style.animation = 'none';
+                void errorMsg.offsetWidth;
+                errorMsg.style.animation = 'shake 0.4s';
+            });
+
+            passInput.addEventListener('paste', e => {
+                e.preventDefault();
+                errorMsg.innerText = "Per motivi di sicurezza, non è possibile incollare la password.";
+                errorMsg.style.display = 'block';
+                errorMsg.style.animation = 'none';
+                void errorMsg.offsetWidth;
+                errorMsg.style.animation = 'shake 0.4s';
+            });
 
             togglePasswordBtn.addEventListener('click', () => {
                 if (passInput.type === 'password') {
@@ -1718,6 +1733,16 @@
                     errorMsg.style.display = 'block';
                     errorMsg.style.animation = 'none';
                     void errorMsg.offsetWidth; 
+                    errorMsg.style.animation = 'shake 0.4s';
+                    return;
+                }
+
+                if (!pass) {
+                    e.preventDefault();
+                    errorMsg.innerText = "Il campo password è obbligatorio.";
+                    errorMsg.style.display = 'block';
+                    errorMsg.style.animation = 'none';
+                    void errorMsg.offsetWidth;
                     errorMsg.style.animation = 'shake 0.4s';
                     return;
                 }
