@@ -722,6 +722,8 @@
             .captcha-powered { font-size: 0.7rem; }
             .captcha-box { width: 28px; height: 28px; }
             .captcha-box.success::after { left: 9px; top: 2px; width: 6px; height: 14px; }
+
+            .captcha-challenge-content { padding: 25px 15px; } /* Fix padding for small screens */
         }
     </style>
 </head>
@@ -1329,7 +1331,7 @@
                 <button type="button" id="captcha-refresh" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; cursor: pointer; color: #475569; transition: all 0.2s; display: flex; align-items: center; justify-content: center;" aria-label="Ricarica immagine CAPTCHA">
                     <svg viewBox="0 0 24 24" style="width: 22px; fill: currentColor;"><path d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2M18 11H13L14.81 9.19A3.94 3.94 0 0 0 12 8A4 4 0 1 0 15.86 13H17.91A6 6 0 1 1 12 6A5.91 5.91 0 0 1 16.22 7.78L18 6Z"/></svg>
                 </button>
-                <input type="text" id="captcha-input-text" style="flex: 1; padding: 12px 15px; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 800; font-size: 1.1rem; outline: none; text-align: center; letter-spacing: 3px; color: var(--text-dark); transition: border-color 0.2s;" placeholder="Testo..." autocomplete="off">
+                <input type="text" id="captcha-input-text" style="flex: 1; width: 100%; min-width: 0; padding: 12px 15px; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 800; font-size: 1.1rem; outline: none; text-align: center; letter-spacing: 3px; color: var(--text-dark); transition: border-color 0.2s;" placeholder="Testo..." autocomplete="off">
             </div>
             <div class="error-msg" id="captcha-error" style="margin-bottom: 15px;">Testo errato. Riprova.</div>
             
