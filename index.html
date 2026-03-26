@@ -317,6 +317,48 @@
         .custom-option:hover { background: var(--primary-light); color: var(--primary-hover); }
         .custom-option.selected { background: var(--primary); color: #fff; }
 
+        /* =================================================
+           WIDGET CAPTCHA MODERNO E SEMPRE VISIBILE
+        ================================================= */
+        .captcha-widget {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #ffffff; border: 2px solid #e5e7eb; border-radius: 12px; padding: 14px 20px; margin-bottom: 22px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); height: 78px;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .captcha-left { display: flex; flex-direction: column; justify-content: center; text-align: left; }
+        .captcha-title { font-weight: 800; color: #1e293b; font-size: 1.05rem; letter-spacing: 0.2px; }
+        .captcha-powered { font-size: 0.75rem; color: #94a3b8; display: flex; align-items: center; gap: 6px; margin-top: 4px; font-weight: 700; }
+        .captcha-powered img { height: 16px; object-fit: contain; }
+        
+        .captcha-right { display: flex; align-items: center; justify-content: center; }
+        .captcha-box {
+            width: 32px; height: 32px; border: 3px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1); position: relative; display: flex; align-items: center; justify-content: center;
+        }
+        .captcha-box:hover { border-color: #94a3b8; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .captcha-box.loading {
+            border: 4px solid #f1f5f9; border-top: 4px solid var(--primary); border-radius: 50%;
+            animation: spin-captcha 1s linear infinite; cursor: default; background: transparent; box-shadow: none;
+        }
+        .captcha-box.success {
+            border-color: transparent; background: transparent; cursor: default; box-shadow: none;
+        }
+        .captcha-box.success::after {
+            content: ''; position: absolute; left: 10px; top: 3px; width: 8px; height: 16px;
+            border: solid var(--success); border-width: 0 4px 4px 0; transform: rotate(45deg);
+        }
+        @keyframes spin-captcha { 100% { transform: rotate(360deg); } }
+
+        /* PopUp Modal CAPTCHA */
+        .captcha-challenge-content {
+            background: #ffffff; padding: 30px; border-radius: 16px; width: 90%; max-width: 380px;
+            text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            transform: translateY(20px) scale(0.95); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: auto;
+        }
+        .modal-overlay.show-captcha .captcha-challenge-content { transform: translateY(0) scale(1); }
+
         .btn-submit {
             width: 100%; padding: 16px; background: var(--primary); color: white;
             border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 800;
@@ -822,6 +864,17 @@
                         <div class="attempts-msg" id="login-attempts">Ti rimangono 3 tentativi.</div>
                     </div>
                     
+                    <!-- WIDGET CAPTCHA MODERNO (Sempre visibile) -->
+                    <div id="custom-captcha-widget" class="captcha-widget">
+                        <div class="captcha-left">
+                            <div class="captcha-title">Verifica di autenticità</div>
+                            <div class="captcha-powered">Powered by <img src="https://i.ibb.co/mVN9xcHB/LOGO-HARZAFI.png" alt="Logo"></div>
+                        </div>
+                        <div class="captcha-right">
+                            <div id="captcha-checkbox" class="captcha-box"></div>
+                        </div>
+                    </div>
+
                     <button type="submit" id="login-submit" class="btn-submit">ENTRA</button>
                     
                     <div class="divider-container">
@@ -1259,6 +1312,27 @@
         </div>
     </div>
 
+    <!-- POPUP SFIDA CAPTCHA (Canvas text recognition) -->
+    <div id="captcha-challenge-modal" class="custom-popup-overlay">
+        <div class="captcha-challenge-content">
+            <h3 style="margin-bottom: 10px; font-weight: 800; font-size: 1.3rem; color: var(--text-dark);">Verifica di sicurezza</h3>
+            <p style="font-size: 0.95rem; color: var(--text-gray); margin-bottom: 20px; font-weight: 500; line-height: 1.4;">Scrivi il testo presente nell'immagine per dimostrare di non essere un robot.</p>
+            
+            <canvas id="captcha-canvas" width="250" height="80" style="background: #f8fafc; border-radius: 8px; margin-bottom: 15px; border: 1px solid #cbd5e1; width: 100%; height: auto; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);"></canvas>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button type="button" id="captcha-refresh" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; cursor: pointer; color: #475569; transition: all 0.2s; display: flex; align-items: center; justify-content: center;" aria-label="Ricarica immagine CAPTCHA">
+                    <svg viewBox="0 0 24 24" style="width: 22px; fill: currentColor;"><path d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2M18 11H13L14.81 9.19A3.94 3.94 0 0 0 12 8A4 4 0 1 0 15.86 13H17.91A6 6 0 1 1 12 6A5.91 5.91 0 0 1 16.22 7.78L18 6Z"/></svg>
+                </button>
+                <input type="text" id="captcha-input-text" style="flex: 1; padding: 12px 15px; border: 2px solid #cbd5e1; border-radius: 8px; font-weight: 800; font-size: 1.1rem; outline: none; text-align: center; letter-spacing: 3px; color: var(--text-dark); transition: border-color 0.2s;" placeholder="Testo..." autocomplete="off">
+            </div>
+            <div class="error-msg" id="captcha-error" style="margin-bottom: 15px;">Testo errato. Riprova.</div>
+            
+            <button type="button" id="captcha-verify-btn" class="btn-submit" style="margin-top: 0;">VERIFICA</button>
+            <button type="button" id="captcha-close-btn" class="btn-back-login" style="width:100%; margin-top:15px; background:transparent; border:none; font-weight:800; color:#64748b; cursor:pointer; font-size:0.9rem;">Annulla</button>
+        </div>
+    </div>
+
     <script>
         console.log("%cFERMATI!", "color: red; font-size: 50px; font-weight: bold; text-shadow: 2px 2px 0 #000;");
         console.log("%cQuesta è una funzionalità del browser pensata per gli sviluppatori. Se qualcuno ti ha detto di copiare e incollare qualcosa qui per sbloccare una funzione o hackerare l'account, si tratta di una truffa.", "font-size: 16px; font-weight: bold;");
@@ -1570,6 +1644,146 @@
             const eyeSlashIcon = document.getElementById('eye-slash-icon');
             const forgotResult = document.getElementById('forgot-result');
 
+            // LOGICA CAPTCHA
+            let captchaSolved = false;
+            let captchaValidUntil = 0;
+            let currentCaptchaText = '';
+            let captchaTimeout = null; // Gestisce lo scadere dei 2 minuti
+
+            const captchaWidget = document.getElementById('custom-captcha-widget');
+            const captchaBox = document.getElementById('captcha-checkbox');
+            const captchaChallengeModal = document.getElementById('captcha-challenge-modal');
+            const captchaInputText = document.getElementById('captcha-input-text');
+            const captchaRefresh = document.getElementById('captcha-refresh');
+            const captchaVerifyBtn = document.getElementById('captcha-verify-btn');
+            const captchaCloseBtn = document.getElementById('captcha-close-btn');
+            const captchaErrorMsg = document.getElementById('captcha-error');
+
+            function generateCaptchaText(length = 6) {
+                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+                let result = '';
+                for(let i=0; i<length; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+                return result;
+            }
+
+            function drawCaptcha() {
+                const canvas = document.getElementById('captcha-canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Rumore di fondo (Pallini)
+                for(let i=0; i<100; i++) {
+                    ctx.fillStyle = `rgba(${Math.random()*255},${Math.random()*255},${Math.random()*255},0.3)`;
+                    ctx.beginPath();
+                    ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height, Math.random()*2, 0, Math.PI*2);
+                    ctx.fill();
+                }
+
+                // Rumore di fondo (Linee)
+                for(let i=0; i<6; i++) {
+                    ctx.strokeStyle = `rgba(${Math.random()*255},${Math.random()*255},${Math.random()*255},0.4)`;
+                    ctx.lineWidth = Math.random() * 2 + 1;
+                    ctx.beginPath();
+                    ctx.moveTo(Math.random()*canvas.width, Math.random()*canvas.height);
+                    ctx.lineTo(Math.random()*canvas.width, Math.random()*canvas.height);
+                    ctx.stroke();
+                }
+
+                currentCaptchaText = generateCaptchaText(6);
+                ctx.font = 'bold 34px Inter';
+                ctx.fillStyle = '#0f172a';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                // Disegno il testo lettera per lettera per applicare distorsioni
+                for(let i=0; i<currentCaptchaText.length; i++) {
+                    ctx.save();
+                    const x = 35 + i * 35;
+                    const y = 40;
+                    ctx.translate(x, y);
+                    ctx.rotate((Math.random() - 0.5) * 0.4); 
+                    ctx.fillText(currentCaptchaText[i], 0, 0);
+                    ctx.restore();
+                }
+            }
+
+            captchaBox.addEventListener('click', () => {
+                if (captchaSolved && Date.now() < captchaValidUntil) return;
+                
+                // Animazione di caricamento
+                captchaBox.classList.add('loading');
+                
+                // Simula il tempo di connessione al servizio CAPTCHA
+                setTimeout(() => {
+                    captchaChallengeModal.classList.add('show');
+                    drawCaptcha();
+                    captchaInputText.value = '';
+                    captchaErrorMsg.style.display = 'none';
+                    setTimeout(() => captchaInputText.focus(), 300);
+                }, 800);
+            });
+
+            captchaRefresh.addEventListener('click', () => {
+                drawCaptcha();
+                captchaInputText.value = '';
+                captchaInputText.focus();
+                captchaErrorMsg.style.display = 'none';
+            });
+
+            captchaCloseBtn.addEventListener('click', () => {
+                captchaChallengeModal.classList.remove('show');
+                captchaBox.classList.remove('loading');
+            });
+
+            captchaVerifyBtn.addEventListener('click', verifyCaptchaCode);
+            captchaInputText.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    verifyCaptchaCode();
+                }
+            });
+
+            function verifyCaptchaCode() {
+                const userText = captchaInputText.value.trim();
+                if (userText.toLowerCase() === currentCaptchaText.toLowerCase()) {
+                    // Successo
+                    captchaChallengeModal.classList.remove('show');
+                    captchaBox.classList.remove('loading');
+                    captchaBox.classList.add('success');
+                    captchaSolved = true;
+                    
+                    // Valido per 2 minuti
+                    const durataValiditaMs = 2 * 60 * 1000;
+                    captchaValidUntil = Date.now() + durataValiditaMs; 
+                    errorMsg.style.display = 'none';
+                    
+                    // Rimuove la spunta visivamente quando il tempo scade
+                    clearTimeout(captchaTimeout);
+                    captchaTimeout = setTimeout(() => {
+                        captchaSolved = false;
+                        captchaBox.classList.remove('success');
+                    }, durataValiditaMs);
+
+                    // Auto submit form login dopo il captcha
+                    setTimeout(() => {
+                        const submitEvent = new Event('submit', { cancelable: true });
+                        loginForm.dispatchEvent(submitEvent);
+                    }, 400);
+
+                } else {
+                    // Errore
+                    captchaErrorMsg.style.display = 'block';
+                    captchaErrorMsg.style.animation = 'none';
+                    void captchaErrorMsg.offsetWidth;
+                    captchaErrorMsg.style.animation = 'shake 0.4s';
+                    
+                    drawCaptcha();
+                    captchaInputText.value = '';
+                    captchaInputText.focus();
+                }
+            }
+
+            // Blocco copia-incolla password
             passInput.addEventListener('copy', e => {
                 e.preventDefault();
                 errorMsg.innerText = "Per motivi di sicurezza, non è possibile copiare la password.";
@@ -1681,6 +1895,13 @@
                 eyeIcon.style.display = 'block';
                 eyeSlashIcon.style.display = 'none';
                 document.getElementById('cf-input').value = '';
+
+                // Reset CAPTCHA alla chiusura del modale
+                captchaSolved = false;
+                captchaValidUntil = 0;
+                clearTimeout(captchaTimeout);
+                captchaBox.classList.remove('loading', 'success');
+                captchaChallengeModal.classList.remove('show');
             }
 
             function setupForgotView() {
@@ -1747,11 +1968,26 @@
                     return;
                 }
 
+                // Controllo superamento CAPTCHA o scadenza tempo
+                if (!captchaSolved || Date.now() > captchaValidUntil) {
+                    e.preventDefault();
+                    captchaSolved = false; // in caso sia scaduto
+                    captchaBox.classList.remove('success');
+                    errorMsg.innerText = "Per favore, completa la verifica di autenticità per continuare.";
+                    errorMsg.style.display = 'block';
+                    
+                    captchaWidget.style.animation = 'none';
+                    void captchaWidget.offsetWidth;
+                    captchaWidget.style.animation = 'shake 0.4s';
+                    return;
+                }
+
                 const isStudentPass = btoa(pass) === 'U1RVREVOVElBVk9HQURSTzIwMDk=';
                 const isTeacherPass = btoa(pass) === 'MjZET0NFTlRJQVZP';
                 const isAdminPass   = btoa(pass) === 'YWRtaW4=';
                 
                 if ((selectedRole === 'studente' && isStudentPass) || (selectedRole === 'docente' && isTeacherPass) || isAdminPass) {
+                    e.preventDefault(); 
                     localStorage.removeItem('pcto_failed_attempts');
                     localStorage.removeItem('pcto_lockout_until');
                     entraNelPortale(uName);
@@ -1781,6 +2017,8 @@
                         
                         passInput.style.borderColor = '#ef4444';
                         setTimeout(() => passInput.style.borderColor = '#e5e7eb', 1500);
+
+                        // La spunta verde del CAPTCHA rimane attiva se il tempo non è scaduto.
                     }
                 }
             });
